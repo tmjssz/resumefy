@@ -2,7 +2,6 @@
   "name": "resumefy",
   "version": "1.0.0",
   "description": "A CLI for effortlessly rendering your JSON Resume",
-  "main": "src/index.ts",
   "type": "module",
   "repository": "https://github.com/tmjssz/resumefy",
   "author": "Tim-Jonas Schwarz <tmjssz@gmail.com>",
@@ -12,9 +11,15 @@
     "node": ">=20"
   },
   "scripts": {
+    "build": "tsc --build",
     "start": "node --import=tsx src/index.ts",
     "lint": "eslint src"
   },
+  "bin": "./bin/resumefy.js",
+  "files": [
+    "bin",
+    "dist"
+  ],
   "devDependencies": {
     "@eslint/js": "^9.18.0",
     "@types/node": "^22.10.5",
