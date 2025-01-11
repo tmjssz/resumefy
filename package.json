@@ -10,5 +10,8 @@
   "private": false,
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2"
   }
 }
