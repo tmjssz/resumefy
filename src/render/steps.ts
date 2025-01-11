@@ -1,6 +1,5 @@
 import { promises as fs } from 'fs'
 import path from 'path'
-import { yellow } from 'yoctocolors'
 import { render as resumedRender } from 'resumed'
 import type { ResumeBrowser, ResumePage } from '../browser/index.js'
 import { validate } from '../validate.js'
@@ -28,7 +27,7 @@ export const generateHtml = (theme?: string) => async (resume: Resume) => {
   const themeName = theme ?? resume?.meta?.theme
 
   if (!themeName) {
-    const helpText = `Use ${yellow('--theme')} option or set ${yellow('meta.theme')} in resume JSON file.`
+    const helpText = `Use "--theme" option or set "meta.theme" in resume JSON file.`
     throw new Error(`No theme name specified. ${helpText}`)
   }
 
@@ -36,7 +35,7 @@ export const generateHtml = (theme?: string) => async (resume: Resume) => {
   try {
     themeModule = await import(themeName)
   } catch {
-    throw new Error(`Could not load theme ${yellow(themeName)}. Is it installed?`)
+    throw new Error(`Could not load theme "${themeName}". Is it installed?`)
   }
 
   return resumedRender(resume, themeModule)
