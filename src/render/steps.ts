@@ -3,7 +3,8 @@ import path from 'path'
 import { render as resumedRender } from 'resumed'
 import type { ResumeBrowser, ResumePage } from '../browser/index.js'
 import { validate } from '../validate.js'
-import { Theme } from '../types.js'
+import { getTheme } from './utils.js'
+import { Resume } from '../types.js'
 
 export const loadFile = async (resumeFile: string): Promise<object> => {
   console.debug('📁', 'Loading resume file...')
@@ -16,28 +17,9 @@ export const validateResume = async (resume: object): Promise<object> => {
   return resume
 }
 
-interface Resume {
-  meta?: {
-    theme?: string
-  }
-}
-
 export const generateHtml = (theme?: string) => async (resume: Resume) => {
   console.debug('📎', 'Render resume...')
-  const themeName = theme ?? resume?.meta?.theme
-
-  if (!themeName) {
-    const helpText = `Use "--theme" option or set "meta.theme" in resume JSON file.`
-    throw new Error(`No theme name specified. ${helpText}`)
-  }
-
-  let themeModule: Theme
-  try {
-    themeModule = await import(themeName)
-  } catch {
-    throw new Error(`Could not load theme "${themeName}". Is it installed?`)
-  }
-
+  const themeModule = await getTheme(theme, resume)
   return resumedRender(resume, themeModule)
 }
 
@@ -53,8 +35,7 @@ export const renderError = (browser: ResumeBrowser) => async (err: unknown) => {
 
 export const writeFiles = (dir: string, name: string) => (page: ResumePage) => {
   console.debug('💾', 'Write files...')
-  const browser = page.browser
-  return browser.writeFiles(dir, name)
+  return page.browser.writeFiles(dir, name)
 }
 
 export const printSuccess = (dir: string, name: string) => () => {

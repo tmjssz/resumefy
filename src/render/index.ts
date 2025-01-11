@@ -2,6 +2,7 @@ import { watchFile } from 'fs'
 import puppeteer from 'puppeteer'
 import { generateHtml, loadFile, printSuccess, renderError, renderPage, validateResume, writeFiles } from './steps.js'
 import { ResumeBrowser } from '../browser/index.js'
+import { getFilename } from './utils.js'
 
 type RenderOptions = {
   // Directory to save output files
@@ -22,9 +23,11 @@ type RenderOptions = {
  */
 export const render = async (
   resumeFile: string,
-  { watch = false, headless = !watch, theme, name = 'resume', outDir = 'result' }: RenderOptions = {},
+  { watch = false, headless = !watch, theme, outDir = 'result' }: RenderOptions = {},
   browser?: ResumeBrowser,
 ) => {
+  const filename = getFilename(resumeFile)
+
   let resumeBrowser = browser
 
   if (!resumeBrowser) {
@@ -36,8 +39,8 @@ export const render = async (
     .then(validateResume)
     .then(generateHtml(theme))
     .then(renderPage(resumeBrowser))
-    .then(writeFiles(outDir, name))
-    .then(printSuccess(outDir, name))
+    .then(writeFiles(outDir, filename))
+    .then(printSuccess(outDir, filename))
     .catch(renderError(resumeBrowser))
 
   if (!browser) {
@@ -45,7 +48,7 @@ export const render = async (
       // Watch resume file for changes
       watchFile(resumeFile, () => {
         console.debug(`\n[${new Date().toISOString()}] ----------------------------------------\n`)
-        return render(resumeFile, { name, outDir }, resumeBrowser)
+        return render(resumeFile, { outDir }, resumeBrowser)
       })
     } else {
       await resumeBrowser.close()
