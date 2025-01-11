@@ -15,4 +15,4 @@ program.parse()
 
 const { dir, name, watch, headless } = program.opts<Options>()
 
-// console.log(dir, name, watch, headless)
+console.log(dir, name, watch, headless)
