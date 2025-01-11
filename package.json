@@ -2,7 +2,7 @@
   "name": "resumefy",
   "version": "1.0.0",
   "description": "A CLI for effortlessly rendering your JSON Resume",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "type": "module",
   "repository": "https://github.com/tmjssz/resumefy",
   "author": "Tim-Jonas Schwarz <tmjssz@gmail.com>",
@@ -10,6 +10,9 @@
   "private": false,
   "engines": {
     "node": ">=20"
+  },
+  "scripts": {
+    "start": "node --import=tsx src/index.ts"
   },
   "devDependencies": {
     "prettier": "^3.4.2",
