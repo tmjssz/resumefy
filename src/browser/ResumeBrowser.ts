@@ -1,7 +1,7 @@
 import type { Browser } from 'puppeteer'
 import ErrorHtmlRenderer from 'error-html'
 import { existsSync, promises as fs } from 'fs'
-import { ResumePage } from './ResumePage'
+import { ResumePage } from './ResumePage.js'
 
 /**
  * Represents a browser to render resume

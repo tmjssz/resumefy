@@ -1,7 +1,7 @@
 import type { Page } from 'puppeteer'
 import { promises as fs } from 'fs'
 import path from 'path'
-import type { ResumeBrowser } from './ResumeBrowser'
+import type { ResumeBrowser } from './ResumeBrowser.js'
 
 /**
  * Represents a page in the browser

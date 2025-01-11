@@ -1,13 +1,10 @@
 import { promises as fs } from 'fs'
 import path from 'path'
-import * as theme from '@tmjssz/jsonresume-theme-even'
+import { yellow } from 'yoctocolors'
 import { render as resumedRender } from 'resumed'
-import type { ResumeBrowser, ResumePage } from '../browser'
-import { validate } from '../validate'
-
-type Theme = {
-  render: (resume: object) => string
-}
+import type { ResumeBrowser, ResumePage } from '../browser/index.js'
+import { validate } from '../validate.js'
+import { Theme } from '../types.js'
 
 export const loadFile = async (resumeFile: string): Promise<object> => {
   console.debug('📁', 'Loading resume file...')
@@ -20,9 +17,29 @@ export const validateResume = async (resume: object): Promise<object> => {
   return resume
 }
 
-export const generateHtml = async (resume: object) => {
+interface Resume {
+  meta?: {
+    theme?: string
+  }
+}
+
+export const generateHtml = (theme?: string) => async (resume: Resume) => {
   console.debug('📎', 'Render resume...')
-  return resumedRender(resume, theme as Theme)
+  const themeName = theme ?? resume?.meta?.theme
+
+  if (!themeName) {
+    const helpText = `Use ${yellow('--theme')} option or set ${yellow('meta.theme')} in resume JSON file.`
+    throw new Error(`No theme name specified. ${helpText}`)
+  }
+
+  let themeModule: Theme
+  try {
+    themeModule = await import(themeName)
+  } catch {
+    throw new Error(`Could not load theme ${yellow(themeName)}. Is it installed?`)
+  }
+
+  return resumedRender(resume, themeModule)
 }
 
 export const renderPage = (browser: ResumeBrowser) => async (resumeHtml: string) => {

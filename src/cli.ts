@@ -1,6 +1,5 @@
 import { program } from 'commander'
-import { render } from './render'
-import { yellow } from 'yoctocolors'
+import { render } from './render/index.js'
 
 type Options = {
   dir: string
@@ -15,19 +14,10 @@ export const cli = program
   .description('A CLI for effortlessly rendering your JSON Resume')
   .argument('<resume.json>', 'Path to resume JSON file')
   .option('-d, --dir <dir>', 'Directory to save output files', 'result')
-  .option('-t, --theme <theme>', 'Theme to use')
+  .option('-t, --theme <theme>', 'Theme to use for rendering (overrides theme specified in resume.json)')
   .option('-n, --name <name>', 'Name of the output files', 'resume')
   .option('-w, --watch', 'Watch resume.json file for changes')
   .option('--headless', 'Run browser in headless mode')
-  .action(async (resumeFile: string, { dir, name, theme, watch, headless }: Options) => {
-    let themeModule
-    try {
-      themeModule = await import(theme)
-    } catch {
-      console.error(`Could not load theme ${yellow(theme)}. Is it installed?`)
-
-      process.exitCode = 1
-      return
-    }
-    return render(resumeFile!, { dir, name, watch, headless })
-  })
+  .action(async (filename: string = 'resume.json', { dir, name, theme, watch, headless }: Options) =>
+    render(filename, { dir, name, watch, headless, theme }),
+  )

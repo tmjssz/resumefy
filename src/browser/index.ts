@@ -1,2 +1,2 @@
-export { ResumeBrowser } from './ResumeBrowser'
-export { ResumePage } from './ResumePage'
+export { ResumeBrowser } from './ResumeBrowser.js'
+export { ResumePage } from './ResumePage.js'
