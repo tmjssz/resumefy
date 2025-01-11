@@ -6,12 +6,12 @@ Resumefy renders a JSON resume to HTML and PDF using Puppeteer. It uses [resumed
 
 ## Features
 
-📎 Render from resume JSON file
-🔎 Validate according to the [schema](https://jsonresume.org/schema)
-✨ Theme resolution
-🌐 Render in browser page
-👀 Watch resume file for changes
-💾 Export to HTML and PDF file
+- 📎 Render from resume JSON file
+- 🔎 Validate according to the [schema](https://jsonresume.org/schema)
+- ✨ Theme resolution
+- 🌐 Render in browser page
+- 👀 Watch resume file for changes
+- 💾 Export to HTML and PDF file
 
 ## Installation
 
