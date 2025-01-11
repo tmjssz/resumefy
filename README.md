@@ -37,7 +37,7 @@ $ resumefy --help
 
   Options:
     -V, --version        output the version number
-    -d, --dir <dir>      directory to save output files (default: "result")
+    -d, --outDir <dir>   directory to save output files (default: "result")
     -t, --theme <theme>  theme to use for rendering (overrides theme specified in resume.json)
     -w, --watch          watch resume.json file for changes
     --headless           run browser in headless mode
