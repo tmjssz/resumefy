@@ -1,4 +1,5 @@
 import { program } from 'commander'
+import { render } from './render'
 
 type Options = {
   dir: string
@@ -15,4 +16,4 @@ program.parse()
 
 const { dir, name, watch, headless } = program.opts<Options>()
 
-console.log(dir, name, watch, headless)
+render('resume.json', { dir, name, watch, headless })
