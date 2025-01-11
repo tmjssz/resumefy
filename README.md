@@ -1,27 +1,33 @@
 # Resumefy
 
-A CLI for effortlessly rendering your [JSON Resume](https://jsonresume.org/)
+> A CLI for effortlessly rendering your [JSON Resume](https://jsonresume.org/)
 
-## Getting started
+Resumefy renders a JSON resume to HTML and PDF using Puppeteer. It uses [resumed](https://github.com/rbardini/resumed) to render the resume and supports themes and watching for changes.
 
-To install dependencies run:
+## Installation
 
-```bash
-yarn install
+```shell
+yarn add resumefy jsonresume-theme-even # or your theme of choice
 ```
 
-### Generate files
+## Usage
 
-Render the resume files (.HTML and .PDF) in `result` directory:
+```shell
+$ resumefy --help
 
-```bash
-yarn start
-```
+  Usage: resumefy [options] <resume.json>
 
-### Dev mode
+  A CLI for effortlessly rendering your JSON Resume
 
-Render resume in a browser window and watch the [resume.json](./resume.json) file for changes.
+  Arguments:
+    resume.json          Path to resume JSON file
 
-```bash
-yarn dev
+  Options:
+    -V, --version        output the version number
+    -d, --dir <dir>      Directory to save output files (default: "result")
+    -t, --theme <theme>  Theme to use for rendering (overrides theme specified in resume.json)
+    -n, --name <name>    Name of the output files (default: "resume")
+    -w, --watch          Watch resume.json file for changes
+    --headless           Run browser in headless mode
+    -h, --help           display help for command
 ```

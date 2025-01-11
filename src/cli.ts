@@ -10,7 +10,7 @@ type Options = {
 }
 
 export const cli = program
-  .version('1.0.0')
+  .version('1.1.0')
   .description('A CLI for effortlessly rendering your JSON Resume')
   .argument('<resume.json>', 'Path to resume JSON file')
   .option('-d, --dir <dir>', 'Directory to save output files', 'result')
