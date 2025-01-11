@@ -5,11 +5,9 @@ import { ResumeBrowser } from '../browser/index.js'
 
 type RenderOptions = {
   // Directory to save output files
-  dir?: string
+  outDir?: string
   // Run browser in headless mode
   headless?: boolean
-  // Name of the output files
-  name?: string
   // Watch resume file for changes
   watch?: boolean
   // Theme name to use
@@ -24,7 +22,7 @@ type RenderOptions = {
  */
 export const render = async (
   resumeFile: string,
-  { watch = false, headless = !watch, theme, name = 'resume', dir = 'result' }: RenderOptions = {},
+  { watch = false, headless = !watch, theme, name = 'resume', outDir = 'result' }: RenderOptions = {},
   browser?: ResumeBrowser,
 ) => {
   let resumeBrowser = browser
@@ -38,8 +36,8 @@ export const render = async (
     .then(validateResume)
     .then(generateHtml(theme))
     .then(renderPage(resumeBrowser))
-    .then(writeFiles(dir, name))
-    .then(printSuccess(dir, name))
+    .then(writeFiles(outDir, name))
+    .then(printSuccess(outDir, name))
     .catch(renderError(resumeBrowser))
 
   if (!browser) {
@@ -47,7 +45,7 @@ export const render = async (
       // Watch resume file for changes
       watchFile(resumeFile, () => {
         console.debug(`\n[${new Date().toISOString()}] ----------------------------------------\n`)
-        return render(resumeFile, { name, dir }, resumeBrowser)
+        return render(resumeFile, { name, outDir }, resumeBrowser)
       })
     } else {
       await resumeBrowser.close()
