@@ -6,13 +6,13 @@ Resumefy renders a JSON resume to HTML and PDF using Puppeteer. It uses [resumed
 
 ## Installation
 
-```bash
+```shell
 yarn add resumefy jsonresume-theme-even # or your theme of choice
 ```
 
 ## Usage
 
-```bash
+```shell
 $ resumefy --help
 
   Usage: resumefy [options] <resume.json>
