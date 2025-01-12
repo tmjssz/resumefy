@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs'
 import path from 'path'
-import { render as resumedRender } from 'resumed'
+import { render } from 'resumed'
 import type { ResumeBrowser, ResumePage } from '../browser/index.js'
 import { validate } from '../validate.js'
 import { getTheme } from './utils.js'
@@ -20,7 +20,7 @@ export const validateResume = async (resume: object): Promise<object> => {
 export const generateHtml = (theme?: string) => async (resume: Resume) => {
   console.debug('📎', 'Render resume...')
   const themeModule = await getTheme(theme, resume)
-  return resumedRender(resume, themeModule)
+  return render(resume, themeModule)
 }
 
 export const renderPage = (browser: ResumeBrowser) => async (resumeHtml: string) => {
