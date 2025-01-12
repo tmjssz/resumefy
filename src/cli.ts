@@ -11,7 +11,7 @@ type Options = {
 export const cli = program
   .version('1.1.0')
   .description('A CLI for effortlessly rendering your JSON Resume')
-  .argument('<resume.json>', 'path to resume JSON file')
+  .argument('[resume.json]', 'path to resume JSON file', 'resume.json')
   .option('-d, --outDir <dir>', 'directory to save output files', 'result')
   .option('-t, --theme <theme>', 'theme to use for rendering (overrides theme specified in resume.json)')
   .option('-w, --watch', 'watch resume.json file for changes')

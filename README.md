@@ -23,7 +23,7 @@ yarn add resumefy jsonresume-theme-even # or your theme of choice
 
 ## Usage
 
-You can render your resume by running the command `resumefy <resume.json>`, where `<resume.json>` is the path to your JSON resume file. It can be customized wth the following options.
+You can render your resume by running the command `resumefy [resume.json]`, where `[resume.json]` is the path to your JSON resume file. If no file path is provided, it will look for a `resume.json` in the current directory. The following options can be used.
 
 ```shell
 $ resumefy --help
@@ -33,7 +33,7 @@ $ resumefy --help
   A CLI for effortlessly rendering your JSON Resume
 
   Arguments:
-    resume.json          path to resume JSON file
+    resume.json          path to resume JSON file (default: "resume.json")
 
   Options:
     -V, --version        output the version number
