@@ -28,20 +28,20 @@ You can render your resume by running the command `resumefy [resume.json]`, wher
 ```shell
 $ resumefy --help
 
-  Usage: resumefy [options] <resume.json>
+  Usage: resumefy [options] [resume.json]
 
   A CLI for effortlessly rendering your JSON Resume
 
   Arguments:
-    resume.json          path to resume JSON file (default: "resume.json")
+    resume.json            path to resume JSON file (default: "resume.json")
 
   Options:
-    -V, --version        output the version number
-    -d, --outDir <dir>   directory to save output files (default: "result")
-    -t, --theme <theme>  theme to use for rendering (overrides theme specified in resume.json)
-    -w, --watch          watch resume.json file for changes
-    --headless           run browser in headless mode
-    -h, --help           display help for command
+    -V, --version          output the version number
+    -d, --outDir <outDir>  directory to save output files (default: "result")
+    -t, --theme <theme>    theme to use for rendering (overrides theme specified in resume.json)
+    -w, --watch            watch resume.json file for changes
+    --headless             run browser in headless mode
+    -h, --help             display help for command
 ```
 
 ### Theme resolution
