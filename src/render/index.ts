@@ -23,7 +23,7 @@ import { RenderOptions } from '../types.js'
  */
 export const render = async (
   resumeFile: string,
-  { watch = false, headless = !watch, theme, outDir = 'result' }: RenderOptions = {},
+  { watch = false, headless = !watch, theme, outDir = '.' }: RenderOptions = {},
   browser?: ResumeBrowser,
 ) => {
   const filename = getFilename(resumeFile)
