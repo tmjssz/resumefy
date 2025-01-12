@@ -13,7 +13,8 @@ export type StepState = {
   total: number
 }
 
-export type StepFn<ReturnType, ArgsType extends Array<unknown> = []> = (
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+export type StepFn<ReturnType = any, ArgsType extends Array<any> = Array<any>> = (
   step: StepState,
 ) => (...args: ArgsType) => Promise<ReturnType>
 
@@ -22,7 +23,7 @@ export type StepFn<ReturnType, ArgsType extends Array<unknown> = []> = (
  * @param steps Step functions to execute
  * @returns Promise resolving with the result of the last step
  */
-export const executeSteps = async (steps: StepFn<any, any>[]) => {
+export const executeSteps = (steps: StepFn[]) => {
   return steps.reduce(async (prev, next, i) => {
     const nextStep = next({ current: i + 1, total: steps.length })
     return nextStep(await prev)
@@ -61,7 +62,7 @@ export const renderPage =
   }
 
 export const writeFiles =
-  (dir: string, name: string): StepFn<any, [page: ResumePage]> =>
+  (dir: string, name: string): StepFn<unknown, [page: ResumePage]> =>
   (step) =>
   (page) => {
     log.step(step, '💾 ', 'Writing files...')
