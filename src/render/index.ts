@@ -1,7 +1,16 @@
 import { dim, underline } from 'ansicolor'
 import fs from 'fs'
 import puppeteer from 'puppeteer'
-import { generateHtml, loadFile, printSuccess, renderError, renderPage, validateResume, writeFiles } from './steps.js'
+import {
+  executeSteps,
+  generateHtml,
+  loadFileStep,
+  printSuccess,
+  renderError,
+  renderPage,
+  validateResume,
+  writeFiles,
+} from './steps.js'
 import { ResumeBrowser } from '../browser/index.js'
 import { getFilename } from './utils.js'
 import { RenderOptions } from '../types.js'
@@ -26,12 +35,14 @@ export const render = async (
     resumeBrowser = new ResumeBrowser(browser)
   }
 
-  await loadFile(resumeFile)
-    .then(validateResume)
-    .then(generateHtml(theme))
-    .then(renderPage(resumeBrowser))
-    .then(writeFiles(outDir, filename))
-    .then(printSuccess(outDir, filename))
+  await executeSteps([
+    loadFileStep(resumeFile),
+    validateResume,
+    generateHtml(theme),
+    renderPage(resumeBrowser),
+    writeFiles(outDir, filename),
+  ])
+    .then(() => printSuccess(outDir, filename))
     .catch(renderError(resumeBrowser))
 
   if (!browser) {
