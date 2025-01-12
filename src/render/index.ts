@@ -3,17 +3,7 @@ import puppeteer from 'puppeteer'
 import { generateHtml, loadFile, printSuccess, renderError, renderPage, validateResume, writeFiles } from './steps.js'
 import { ResumeBrowser } from '../browser/index.js'
 import { getFilename } from './utils.js'
-
-export type RenderOptions = {
-  // Directory to save output files
-  outDir?: string
-  // Run browser in headless mode
-  headless?: boolean
-  // Watch resume file for changes
-  watch?: boolean
-  // Theme name to use
-  theme?: string
-}
+import { RenderOptions } from '../types.js'
 
 /**
  * Render resume in browser and save PDF and HTML files.
