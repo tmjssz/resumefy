@@ -1,3 +1,4 @@
+import { underline, yellow } from 'ansicolor'
 import { basename, extname } from 'path'
 import { Resume, Theme } from '../types'
 
@@ -12,7 +13,7 @@ export const getFilename = (path: string) => {
   const filename = fileBasename.match(new RegExp(`(.+)${extension}`))?.[1]
 
   if (!filename) {
-    throw new Error(`Could not get filename from path: ${path}`)
+    throw new Error(`Could not get filename from path: ${underline(path)}`)
   }
 
   return filename
@@ -28,7 +29,7 @@ export const getTheme = async (theme?: string, resume?: Resume): Promise<Theme> 
   const themeName = theme ?? resume?.meta?.theme
 
   if (!themeName) {
-    const helpText = `Use "--theme" option or set "meta.theme" in resume JSON file.`
+    const helpText = `Use "${yellow('--theme')}" option or set "${yellow('meta.theme')}" in resume JSON file.`
     throw new Error(`No theme name specified. ${helpText}`)
   }
 
@@ -36,6 +37,6 @@ export const getTheme = async (theme?: string, resume?: Resume): Promise<Theme> 
     const themeModule = await import(themeName)
     return themeModule
   } catch {
-    throw new Error(`Could not load theme "${themeName}". Is it installed?`)
+    throw new Error(`Could not load theme "${yellow(themeName)}". Is it installed?`)
   }
 }

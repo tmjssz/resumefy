@@ -1,7 +1,9 @@
 import sampleResume from '@jsonresume/schema/sample.resume.json' with { type: 'json' }
+import { underline } from 'ansicolor'
 import { promises as fs } from 'fs'
 import { InitOptions } from './types.js'
 import { getTheme } from './render/utils.js'
+import { log } from './log.js'
 
 export const init = async (filename: string, options: InitOptions) => {
   const { theme } = options
@@ -11,7 +13,7 @@ export const init = async (filename: string, options: InitOptions) => {
       await getTheme(theme)
     } catch (err) {
       if (err instanceof Error) {
-        console.warn(err.message)
+        log.warn(err.message)
       }
     }
   }
@@ -19,5 +21,5 @@ export const init = async (filename: string, options: InitOptions) => {
   const resume = theme ? { ...sampleResume, meta: { ...sampleResume.meta, theme } } : sampleResume
 
   await fs.writeFile(filename, JSON.stringify(resume, null, 2))
-  console.log('🚀', `Created file ${filename}`)
+  console.log('🚀', `Created file ${underline(filename)}`)
 }

@@ -1,3 +1,4 @@
+import { strip } from 'ansicolor'
 import type { Browser } from 'puppeteer'
 import ErrorHtmlRenderer from 'error-html'
 import { existsSync, promises as fs } from 'fs'
@@ -43,6 +44,8 @@ export class ResumeBrowser {
    */
   async error(err: unknown) {
     const error = err instanceof Error ? err : new Error(`An error occurred while rendering the resume: ${err}`)
+    error.message = strip(error.message)
+    error.stack = error.stack ? strip(error.stack) : error.stack
     const htmlError = this.#errorHtmlRenderer.render(error)
     return this.render(htmlError)
   }
