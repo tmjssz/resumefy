@@ -59,7 +59,7 @@ $ resumefy render --help
     resume.json            path to resume JSON file (default: "resume.json")
 
   Options:
-    -d, --outDir <outDir>  directory to save output files (default: "result")
+    -d, --outDir <outDir>  directory to save output files (default: ".")
     -t, --theme <theme>    theme to use for rendering (overrides theme specified in resume.json)
     -w, --watch            watch resume.json file for changes
     --headless             run browser in headless mode
