@@ -23,25 +23,66 @@ yarn add resumefy jsonresume-theme-even # or your theme of choice
 
 ## Usage
 
-You can render your resume by running the command `resumefy [resume.json]`, where `[resume.json]` is the path to your JSON resume file. If no file path is provided, it will look for a `resume.json` in the current directory. The following options can be used.
+Resumefy provides two commands, `render` and `init`, which can be used in the following way.
 
 ```shell
 $ resumefy --help
 
-  Usage: resumefy [options] [resume.json]
+  Usage: resumefy [options] [command]
 
   A CLI for effortlessly rendering your JSON Resume
+
+  Options:
+    -V, --version                   output the version number
+    -h, --help                      display help for command
+
+  Commands:
+    render [options] [resume.json]  render resume to PDF and HTML
+    init [options] [resume.json]    create a new resume.json file
+    help [command]                  display help for command
+```
+
+## Commands
+
+### `render` (default)
+
+Renders resume in a browser window and exports it to HTML and PDF. The `[resume.json]` argument specifies the path to your JSON resume file. If no file path is provided, it defaults to `resume.json` in the current directory. The following options are available:
+
+```shell
+$ resumefy render --help
+
+  Usage: resumefy render [options] [resume.json]
+
+  render resume to PDF and HTML
 
   Arguments:
     resume.json            path to resume JSON file (default: "resume.json")
 
   Options:
-    -V, --version          output the version number
     -d, --outDir <outDir>  directory to save output files (default: "result")
     -t, --theme <theme>    theme to use for rendering (overrides theme specified in resume.json)
     -w, --watch            watch resume.json file for changes
     --headless             run browser in headless mode
     -h, --help             display help for command
+```
+
+### `init`
+
+Creates a new resume JSON file with sample data. The `[resume.json]` argument specifies the file name. The following options are available:
+
+```shell
+$ resumefy init --help
+
+  Usage: resumefy init [options] [resume.json]
+
+  create a new resume.json file
+
+  Arguments:
+    resume.json          filename to create (default: "resume.json")
+
+  Options:
+    -t, --theme <theme>  theme to use for rendering (sets theme in resume.json)
+    -h, --help           display help for command
 ```
 
 ### Theme resolution
