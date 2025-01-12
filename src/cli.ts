@@ -3,7 +3,7 @@ import { render } from './render/index.js'
 import { InitOptions, RenderOptions } from './types.js'
 import { init } from './init.js'
 
-export const cli = program.version('1.1.0').description('A CLI for effortlessly rendering your JSON Resume')
+export const cli = program.version('1.2.0').description('A CLI for effortlessly rendering your JSON Resume')
 
 cli
   .command('render', { isDefault: true })
