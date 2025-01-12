@@ -1,7 +1,7 @@
 import { program } from 'commander'
 import { render } from './render/index.js'
 
-type Options = {
+export type CliOptions = {
   outDir: string
   theme: string
   watch?: boolean
@@ -16,6 +16,6 @@ export const cli = program
   .option('-t, --theme <theme>', 'theme to use for rendering (overrides theme specified in resume.json)')
   .option('-w, --watch', 'watch resume.json file for changes')
   .option('--headless', 'run browser in headless mode')
-  .action(async (filename: string = 'resume.json', { outDir, theme, watch, headless }: Options) =>
+  .action(async (filename: string = 'resume.json', { outDir, theme, watch, headless }: CliOptions) =>
     render(filename, { outDir, watch, headless, theme }),
   )

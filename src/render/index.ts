@@ -4,7 +4,7 @@ import { generateHtml, loadFile, printSuccess, renderError, renderPage, validate
 import { ResumeBrowser } from '../browser/index.js'
 import { getFilename } from './utils.js'
 
-type RenderOptions = {
+export type RenderOptions = {
   // Directory to save output files
   outDir?: string
   // Run browser in headless mode
