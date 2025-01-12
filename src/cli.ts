@@ -18,6 +18,6 @@ cli
 cli
   .command('init')
   .description('create a new resume.json file')
-  .argument('[filename]', 'filename to create', 'resume.json')
+  .argument('[resume.json]', 'filename to create', 'resume.json')
   .option('-t, --theme <theme>', 'theme to use for rendering (sets theme in resume.json)')
   .action((filename: string = 'resume.json', options: InitOptions) => init(filename, options))
