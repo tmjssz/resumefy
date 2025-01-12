@@ -1,3 +1,4 @@
+import { dim } from 'ansicolor'
 import { watchFile } from 'fs'
 import puppeteer from 'puppeteer'
 import { generateHtml, loadFile, printSuccess, renderError, renderPage, validateResume, writeFiles } from './steps.js'
@@ -37,7 +38,7 @@ export const render = async (
     if (watch) {
       // Watch resume file for changes
       watchFile(resumeFile, () => {
-        console.debug(`\n[${new Date().toISOString()}] ----------------------------------------\n`)
+        console.log(dim(`\n[${new Date().toISOString()}] Resume file changed`), '\n')
         return render(resumeFile, { outDir }, resumeBrowser)
       })
     } else {
