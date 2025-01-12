@@ -1,5 +1,5 @@
-import { dim } from 'ansicolor'
-import { watchFile } from 'fs'
+import { dim, underline } from 'ansicolor'
+import fs from 'fs'
 import puppeteer from 'puppeteer'
 import { generateHtml, loadFile, printSuccess, renderError, renderPage, validateResume, writeFiles } from './steps.js'
 import { ResumeBrowser } from '../browser/index.js'
@@ -37,10 +37,14 @@ export const render = async (
   if (!browser) {
     if (watch) {
       // Watch resume file for changes
-      watchFile(resumeFile, () => {
-        console.log(dim(`\n[${new Date().toISOString()}] Resume file changed`), '\n')
-        return render(resumeFile, { outDir }, resumeBrowser)
+      fs.watch(resumeFile, (_event, filename) => {
+        if (filename) {
+          console.log(dim(`\n[${new Date().toISOString()}] ${underline(filename)} changed`), '\n')
+          return render(resumeFile, { outDir }, resumeBrowser)
+        }
+        return
       })
+      console.log(dim(`\nWatching ${underline(resumeFile)} for changes...`))
     } else {
       await resumeBrowser.close()
     }
