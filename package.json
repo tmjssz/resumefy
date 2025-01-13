@@ -14,7 +14,10 @@
     "employment"
   ],
   "type": "module",
-  "repository": "https://github.com/tmjssz/resumefy",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tmjssz/resumefy.git"
+  },
   "author": "Tim-Jonas Schwarz <tmjssz@gmail.com>",
   "license": "MIT",
   "private": false,
@@ -26,7 +29,9 @@
     "start": "node --import=tsx src/index.ts",
     "lint": "eslint src"
   },
-  "bin": "./bin/resumefy.js",
+  "bin": {
+    "resumefy": "bin/resumefy.js"
+  },
   "files": [
     "bin",
     "dist"
