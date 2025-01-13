@@ -3,13 +3,13 @@ import { render } from './render/index.js'
 import { InitOptions, RenderOptions } from './types.js'
 import { init } from './init.js'
 
-export const cli = program.version('1.2.0').description('A CLI for effortlessly rendering your JSON Resume')
+export const cli = program.version('1.3.0').description('A CLI for effortlessly rendering your JSON Resume')
 
 cli
   .command('render', { isDefault: true })
   .description('render resume to PDF and HTML')
   .argument('[resume.json]', 'path to resume JSON file', 'resume.json')
-  .option('-d, --outDir <outDir>', 'directory to save output files', 'result')
+  .option('-d, --outDir <outDir>', 'directory to save output files', '.')
   .option('-t, --theme <theme>', 'theme to use for rendering (overrides theme specified in resume.json)')
   .option('-w, --watch', 'watch resume.json file for changes')
   .option('--headless', 'run browser in headless mode')
