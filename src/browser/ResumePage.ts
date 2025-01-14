@@ -1,7 +1,8 @@
-import type { Page } from 'puppeteer'
+import { TimeoutError, type Page } from 'puppeteer'
 import { promises as fs } from 'fs'
 import path from 'path'
 import type { ResumeBrowser } from './ResumeBrowser.js'
+import { log } from '../cli/log.js'
 
 /**
  * Represents a page in the browser
@@ -49,6 +50,12 @@ export class ResumePage {
    * @returns Promise resolving when file is written
    */
   async pdf(dir: string, name: string) {
-    return this.#page.pdf({ timeout: 0, path: path.join(dir, `${name}.pdf`), format: 'a4', printBackground: true })
+    return this.#page.pdf({ path: path.join(dir, `${name}.pdf`), format: 'a4', printBackground: true }).catch((err) => {
+      if (err instanceof TimeoutError) {
+        log.error(err.message)
+      } else {
+        throw err
+      }
+    })
   }
 }
