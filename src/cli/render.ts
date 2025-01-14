@@ -28,5 +28,7 @@ export const render = async (
       return
     })
     log.dim(`\nWatching ${underline(resumeFile)} for changes...`)
+  } else {
+    await renderer.close()
   }
 }

@@ -127,7 +127,14 @@ export class Renderer {
         )
       })
     } else {
-      await this.#browser.close()
+      await this.close()
     }
+  }
+
+  /**
+   * Close browser
+   */
+  async close() {
+    await this.#browser.close()
   }
 }
