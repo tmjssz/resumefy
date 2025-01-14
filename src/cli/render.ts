@@ -9,7 +9,7 @@ export const render = async (
   resumeFile: string,
   { watch = false, headless = !watch, theme, outDir = '.' }: RenderCliOptions = {},
 ) => {
-  const browser = await puppeteer.launch({ defaultViewport: null, headless })
+  const browser = await puppeteer.launch({ timeout: 0, defaultViewport: null, headless, args: ['--no-sandbox'] })
   const renderer = new Renderer(resumeFile, { theme: theme!, outDir }, browser, true)
 
   await renderer.render().catch(() => {

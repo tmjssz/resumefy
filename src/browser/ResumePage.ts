@@ -49,6 +49,6 @@ export class ResumePage {
    * @returns Promise resolving when file is written
    */
   async pdf(dir: string, name: string) {
-    return this.#page.pdf({ path: path.join(dir, `${name}.pdf`), format: 'a4', printBackground: true })
+    return this.#page.pdf({ timeout: 0, path: path.join(dir, `${name}.pdf`), format: 'a4', printBackground: true })
   }
 }
