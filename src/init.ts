@@ -21,5 +21,5 @@ export const init = async (filename: string, options: InitOptions) => {
   const resume = theme ? { ...sampleResume, meta: { ...sampleResume.meta, theme } } : sampleResume
 
   await fs.writeFile(filename, JSON.stringify(resume, null, 2))
-  console.log('🚀', `Created file ${underline(filename)}`)
+  log.success(`Created file ${underline(filename)} 🚀`)
 }

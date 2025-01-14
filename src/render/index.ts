@@ -1,19 +1,12 @@
-import { dim, underline } from 'ansicolor'
+import { bright, underline } from 'ansicolor'
 import fs from 'fs'
+import path from 'path'
 import puppeteer from 'puppeteer'
-import {
-  executeSteps,
-  generateHtml,
-  loadFileStep,
-  printSuccess,
-  renderError,
-  renderPage,
-  validateResume,
-  writeFiles,
-} from './steps.js'
+import { execute, generateHtml, loadFile, renderPage, validateResume, writeFiles } from './steps.js'
 import { ResumeBrowser } from '../browser/index.js'
 import { getFilename } from './utils.js'
 import { RenderOptions } from '../types.js'
+import { log } from '../log.js'
 
 /**
  * Render resume in browser and save PDF and HTML files.
@@ -35,27 +28,37 @@ export const render = async (
     resumeBrowser = new ResumeBrowser(browser)
   }
 
-  await executeSteps([
-    loadFileStep(resumeFile),
+  await execute([
+    loadFile(resumeFile),
     validateResume,
     generateHtml(theme),
     renderPage(resumeBrowser),
     writeFiles(outDir, filename),
   ])
-    .then(() => printSuccess(outDir, filename))
-    .catch(renderError(resumeBrowser))
+    .then(() => {
+      log.success('Resume rendered successfully 🎉')
+      console.log('Files written:')
+      console.log(`- ${bright('html')}\t`, underline(path.resolve(path.join(outDir, `${filename}.html`))))
+      console.log(`- ${bright('pdf')}\t`, underline(path.resolve(path.join(outDir, `${filename}.pdf`))))
+    })
+    .catch((err) => {
+      log.error(err)
+      if (!!resumeBrowser && !headless) {
+        resumeBrowser.error(err)
+      }
+    })
 
   if (!browser) {
     if (watch) {
       // Watch resume file for changes
       fs.watch(resumeFile, (_event, filename) => {
         if (filename) {
-          console.log(dim(`\n[${new Date().toISOString()}] ${underline(filename)} changed`), '\n')
+          log.dim(`\n[${new Date().toISOString()}] ${underline(filename)} changed\n`)
           return render(resumeFile, { outDir }, resumeBrowser)
         }
         return
       })
-      console.log(dim(`\nWatching ${underline(resumeFile)} for changes...`))
+      log.dim(`\nWatching ${underline(resumeFile)} for changes...`)
     } else {
       await resumeBrowser.close()
     }
