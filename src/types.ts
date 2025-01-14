@@ -23,3 +23,5 @@ export type InitOptions = {
   // Theme name to use
   theme?: string
 }
+
+export type ConsoleLog = typeof console.log
