@@ -1,10 +1,10 @@
 import { underline } from 'ansicolor'
 import { loadTheme } from '../render/utils.js'
 import { init as writeFile } from '../init.js'
-import { InitOptions } from '../types.js'
 import { log } from './log.js'
+import { InitCliOptions } from './types.js'
 
-export const init = async (filename: string, options: InitOptions) => {
+export const init = async (filename: string, options: InitCliOptions) => {
   const { theme } = options
 
   if (theme) {
