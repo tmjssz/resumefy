@@ -17,6 +17,6 @@ export const init = async (filename: string, options: InitCliOptions) => {
     }
   }
 
-  await writeFile(filename, options)
+  await writeFile(filename, theme)
   log.success(`Created file ${underline(filename)} 🚀`)
 }
