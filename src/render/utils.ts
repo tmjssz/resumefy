@@ -1,6 +1,6 @@
 import { underline, yellow } from 'ansicolor'
 import { basename, extname } from 'path'
-import { Resume, Theme } from '../types'
+import { Resume, Theme } from '../types.js'
 
 /**
  * Get the filename from a path
@@ -25,7 +25,7 @@ export const getFilename = (path: string) => {
  * @param resume Resume object
  * @returns Theme object
  */
-export const getTheme = async (theme?: string, resume?: Resume): Promise<Theme> => {
+export const loadTheme = async (theme?: string, resume?: Resume): Promise<Theme> => {
   const themeName = theme ?? resume?.meta?.theme
 
   if (!themeName) {
