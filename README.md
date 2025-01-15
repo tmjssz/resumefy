@@ -117,24 +117,6 @@ render('./resume.json', {
 
 `Promise<void>`: A promise resolving when rendering is complete.
 
-### `validate`
-
-Validate a resume JSON file.
-
-```typescript
-import { validate } from 'resumefy'
-
-validate('./resume.json')
-```
-
-#### Parameters
-
-- `resumeFile` _(string)_: The path to the resume JSON file.
-
-#### Returns
-
-`Promise<boolean>`: Promise resolving with a boolean whether resume JSON is valid.
-
 ### `init`
 
 Initialize a new resume JSON file with sample data and optional theme.
@@ -153,3 +135,21 @@ init('my-resume.json', 'jsonresume-theme-even')
 #### Returns
 
 `Promise<void>`: A promise resolving when file is written.
+
+### `validate`
+
+Validate a resume JSON file.
+
+```typescript
+import { validate } from 'resumefy'
+
+validate('./resume.json')
+```
+
+#### Parameters
+
+- `resumeFile` _(string)_: The path to the resume JSON file.
+
+#### Returns
+
+`Promise<boolean>`: Promise resolving with a boolean whether resume JSON is valid.
