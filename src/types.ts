@@ -8,6 +8,11 @@ export interface Resume {
   }
 }
 
-export type RenderOptions = { theme: string; outDir: string }
+export type RenderOptions = {
+  // Directory to save output files
+  outDir?: string
+  // Theme name to use
+  theme: string
+}
 
 export type ConsoleLog = typeof console.log

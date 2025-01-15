@@ -15,17 +15,17 @@ import { validateObject } from '../validate/validate.js'
 export class Renderer {
   #resumeFile: string
   #filename: string = 'resume'
-  #options: RenderOptions
+  #options: Required<RenderOptions>
   #resume: Resume = {}
   #resumeHtml: string = ''
   #browser: ResumeBrowser
   #isCli: boolean = false
   #themeModule: Theme | undefined
 
-  constructor(resumeFile: string, options: RenderOptions, browser: Browser, isCli: boolean = false) {
+  constructor(resumeFile: string, { theme, outDir = '.' }: RenderOptions, browser: Browser, isCli: boolean = false) {
     this.#resumeFile = resumeFile
     this.#filename = getFilename(this.#resumeFile)
-    this.#options = options
+    this.#options = { theme, outDir }
     this.#browser = new ResumeBrowser(browser)
     this.#isCli = isCli
   }
