@@ -2,7 +2,7 @@ import { program } from 'commander'
 import { render } from './render.js'
 import { init } from './init.js'
 
-export const cli = program.version('1.3.0').description('A CLI for effortlessly rendering your JSON Resume')
+export const cli = program.version('1.3.0').description('A simple toolkit to bring your JSON Resume to life')
 
 cli
   .command('render', { isDefault: true })

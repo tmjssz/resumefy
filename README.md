@@ -1,8 +1,8 @@
 # Resumefy
 
-> A CLI for effortlessly rendering your [JSON Resume](https://jsonresume.org/)
+> A simple toolkit to bring your [JSON Resume](https://jsonresume.org/) to life
 
-Resumefy renders a JSON resume to HTML and PDF using Puppeteer. It uses [resumed](https://github.com/rbardini/resumed) to render the resume, can be used with any theme and supports watching for changes.
+Resumefy renders a JSON resume to HTML and PDF with [Puppeteer](https://github.com/puppeteer/puppeteer). It uses [Resumed](https://github.com/rbardini/resumed) under the hood to render the resume and provides both a CLI and a direct Typescript API.
 
 ## Features
 
