@@ -25,7 +25,7 @@ yarn add resumefy jsonresume-theme-even # or your theme of choice
 
 ### Usage
 
-Resumefy provides two commands, `render` and `init`, which can be used in the following way.
+Resumefy provides three commands, `render`, `init` and `validate`, which can be used in the following way.
 
 ```shell
 $ resumefy --help
@@ -41,6 +41,7 @@ $ resumefy --help
   Commands:
     render [options] [resume.json]  render resume to PDF and HTML
     init [options] [resume.json]    create a new resume.json file
+    validate [resume.json]          validate a resume.json file
     help [command]                  display help for command
 ```
 
@@ -85,6 +86,24 @@ $ resumefy init --help
   Options:
     -t, --theme <theme>  theme to use for rendering (sets theme in resume.json)
     -h, --help           display help for command
+```
+
+#### `validate`
+
+Validate a resume JSON file. The `[resume.json]` argument specifies the file name.
+
+```shell
+$ resumefy init --help
+
+  Usage: resumefy validate [options] [resume.json]
+
+  validate a resume.json file
+
+  Arguments:
+    resume.json  path to resume JSON file (default: "resume.json")
+
+  Options:
+    -h, --help   display help for command
 ```
 
 ### Theme resolution
