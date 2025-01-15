@@ -8,7 +8,7 @@ import { RenderOptions } from '../types.js'
  * @param options An options object with the following properties:
  * @param options.theme The theme to use for rendering
  * @param options.outDir The directory to save the output files (default: '.')
- * @returns a promise that resolves when rendering is complete
+ * @returns A promise resolving when rendering is complete
  */
 export const render = async (resumeFile: string, options: RenderOptions) => {
   const browser = await puppeteer.launch({ defaultViewport: null, headless: true })
