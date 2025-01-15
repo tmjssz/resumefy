@@ -7,7 +7,7 @@ import { ResumeBrowser } from '../browser/index.js'
 import { getFilename, loadTheme } from './utils.js'
 import { ConsoleLog, RenderOptions, Resume, Theme } from '../types.js'
 import { log } from '../cli/log.js'
-import { validate } from '../validate.js'
+import { validateObject } from '../validate/validate.js'
 
 /**
  * Renderer class to render resume in browser and save PDF and HTML files.
@@ -45,7 +45,7 @@ export class Renderer {
    */
   async validate(log: ConsoleLog = () => {}) {
     log('🔎 ', 'Validating resume')
-    validate(this.#resume)
+    validateObject(this.#resume)
   }
 
   /**

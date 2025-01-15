@@ -1,4 +1,3 @@
-import resumeSchema from '@jsonresume/schema'
 import { yellow } from 'ansicolor'
 import { ValidationError as ValidationErrorJsonSchema } from 'jsonschema'
 
@@ -14,19 +13,4 @@ export class ValidationError extends Error {
 
     this.errors = errors
   }
-}
-
-/**
- * Validate given resume object.
- * @param resume JSON object representing resume
- * @returns true if resume is valid
- * @throws {ValidationError[]} Error if resume is invalid
- */
-export const validate = (resume: object) => {
-  return resumeSchema.validate(resume, (errors, isValid) => {
-    if (!isValid) {
-      throw new ValidationError(errors)
-    }
-    return true
-  })
 }
