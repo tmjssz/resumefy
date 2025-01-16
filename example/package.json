@@ -1,0 +1,14 @@
+{
+  "name": "resumefy-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "init": "resumefy init --theme @tmjssz/jsonresume-theme-even",
+    "dev": "resumefy --watch",
+    "start": "resumefy"
+  },
+  "dependencies": {
+    "@tmjssz/jsonresume-theme-even": "^0.4.1",
+    "resumefy": "../"
+  }
+}
