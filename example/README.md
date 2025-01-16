@@ -6,7 +6,7 @@ First, run `yarn install` to install dependencies.
 
 ## Headless mode
 
-For simply rendering the resume.json in headless mode:
+For simply rendering the [resume.json](./resume.json) in headless mode:
 
 ```shell
 yarn start
@@ -14,7 +14,7 @@ yarn start
 
 ## Preview mode
 
-For opening the rendered resume in a browser window and watching for changes on the JSON file:
+For opening the rendered resume in a browser window and watching for changes on the [resume.json](./resume.json) file:
 
 ```shell
 yarn dev
