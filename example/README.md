@@ -4,8 +4,6 @@ Simple example on how to use Resumefy.
 
 First, run `yarn install` to install dependencies.
 
-Execute one of the following scripts:
-
 ## Headless mode
 
 For simply rendering the resume.json in headless mode:
