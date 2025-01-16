@@ -49,6 +49,7 @@
     "ansicolor": "^2.0.3",
     "commander": "^13.0.0",
     "error-html": "^0.3.5",
+    "express": "^4.21.2",
     "jsonschema": "^1.5.0",
     "puppeteer": "^24.0.0",
     "resumed": "^4.0.0"
@@ -56,6 +57,7 @@
   "devDependencies": {
     "@eslint/js": "^9.18.0",
     "@tmjssz/jsonresume-theme-even": "^0.4.1",
+    "@types/express": "^5.0.0",
     "@types/node": "^22.10.5",
     "eslint": "^9.18.0",
     "globals": "^15.14.0",
