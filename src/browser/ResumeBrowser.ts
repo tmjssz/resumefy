@@ -1,5 +1,4 @@
 import { strip } from 'ansicolor'
-import path from 'path'
 import type { Browser, Page } from 'puppeteer'
 import ErrorHtmlRenderer from 'error-html'
 import { existsSync, promises as fs } from 'fs'
@@ -90,10 +89,10 @@ export class ResumeBrowser {
   /**
    * Add a preview button to the first page of the browser to open the given file
    * in a new tab (if not in headless mode)
-   * @param filePath Path to the file to preview
+   * @param fileUrl URL to the file to preview
    * @returns Promise resolving when button is added
    */
-  async addMenu(filePath: string) {
+  async addMenu(fileUrl: string) {
     if (this.isHeadless()) {
       // Do not add menu in headless mode
       return
@@ -108,7 +107,7 @@ export class ResumeBrowser {
       } else {
         // Otherwise open new preview page and navigate to file
         const previewPage = await this.#browser.newPage()
-        previewPage.goto(`file:///${path.resolve(filePath)}`)
+        previewPage.goto(fileUrl)
         this.#previewPage = previewPage
       }
     }

@@ -9,6 +9,7 @@ import { ConsoleLog, RenderOptions, Resume, Theme } from '../types.js'
 import { log } from '../cli/log.js'
 import { validateObject } from '../validate/validate.js'
 import { RenderCliOptions } from '../cli/types.js'
+import { startServer } from '../browser/server.js'
 
 /**
  * Renderer class to render resume in browser and save PDF and HTML files.
@@ -140,11 +141,18 @@ export class Renderer {
   }
 
   /**
+   * Start file server for the output directory
+   */
+  startFileServer(port: number = 8080) {
+    startServer(path.resolve(this.#options.outDir), port)
+  }
+
+  /**
    * Add menu to browser
    */
-  async addMenu() {
+  async addMenu(serverUrl: string) {
     if (this.#cliOptions?.watch) {
-      await this.#browser.addMenu(path.join(this.#options.outDir, `${this.#filename}.pdf`))
+      await this.#browser.addMenu(`${serverUrl}/${this.#filename}.pdf`)
     }
   }
 
