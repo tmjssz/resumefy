@@ -1,4 +1,4 @@
-import fsPromises from 'fs/promises'
+import { readFile } from 'fs/promises'
 import { log } from './log.js'
 import { validateObject } from '../validate/validate.js'
 
@@ -6,7 +6,7 @@ export const validate = async (filename: string) => {
   let resumeObject
 
   try {
-    resumeObject = JSON.parse(await fsPromises.readFile(filename, 'utf-8'))
+    resumeObject = JSON.parse(await readFile(filename, 'utf-8'))
   } catch (err) {
     log.error('Error reading file ❌')
     log.error(err)

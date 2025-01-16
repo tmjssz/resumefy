@@ -1,5 +1,5 @@
 import { bright, underline } from 'ansicolor'
-import fsPromises from 'fs/promises'
+import { readFile } from 'fs/promises'
 import path from 'path'
 import { Browser } from 'puppeteer'
 import { render as resumedRender } from 'resumed'
@@ -8,6 +8,7 @@ import { getFilename, loadTheme } from './utils.js'
 import { ConsoleLog, RenderOptions, Resume, Theme } from '../types.js'
 import { log } from '../cli/log.js'
 import { validateObject } from '../validate/validate.js'
+import { RenderCliOptions } from '../cli/types.js'
 
 /**
  * Renderer class to render resume in browser and save PDF and HTML files.
@@ -19,15 +20,20 @@ export class Renderer {
   #resume: Resume = {}
   #resumeHtml: string = ''
   #browser: ResumeBrowser
-  #isCli: boolean = false
+  #cliOptions: RenderCliOptions | undefined
   #themeModule: Theme | undefined
 
-  constructor(resumeFile: string, { theme, outDir = '.' }: RenderOptions, browser: Browser, isCli: boolean = false) {
+  constructor(
+    resumeFile: string,
+    { theme, outDir = '.' }: RenderOptions,
+    browser: Browser,
+    cliOptions?: RenderCliOptions,
+  ) {
     this.#resumeFile = resumeFile
     this.#filename = getFilename(this.#resumeFile)
     this.#options = { theme, outDir }
     this.#browser = new ResumeBrowser(browser)
-    this.#isCli = isCli
+    this.#cliOptions = cliOptions
   }
 
   /**
@@ -36,7 +42,7 @@ export class Renderer {
    */
   async parse(log: ConsoleLog = () => {}) {
     log('📁 ', `Loading ${underline(this.#resumeFile)}`)
-    this.#resume = JSON.parse(await fsPromises.readFile(this.#resumeFile, 'utf-8'))
+    this.#resume = JSON.parse(await readFile(this.#resumeFile, 'utf-8'))
   }
 
   /**
@@ -102,20 +108,20 @@ export class Renderer {
 
     await steps
       .reduce(async (prev, step, i) => {
-        const logFn = this.#isCli ? log.step(i + 1, steps.length) : undefined
+        const logFn = this.#cliOptions ? log.step(i + 1, steps.length) : undefined
         return prev.then(() => step(logFn))
       }, Promise.resolve())
       .catch((err) => {
         this.#browser.error(err)
 
-        if (this.#isCli) {
+        if (this.#cliOptions) {
           log.error(err)
         }
 
         throw err
       })
 
-    if (this.#isCli) {
+    if (this.#cliOptions) {
       log.success('Resume rendered successfully 🎉')
       console.log('Files written:')
 
@@ -126,9 +132,27 @@ export class Renderer {
           underline(path.resolve(path.join(this.#options.outDir, `${this.#filename}.${ext}`))),
         )
       })
-    } else {
+    }
+
+    if (!this.#cliOptions || !this.#cliOptions?.watch) {
       await this.close()
     }
+  }
+
+  /**
+   * Add menu to browser
+   */
+  async addMenu() {
+    if (this.#cliOptions?.watch) {
+      await this.#browser.addMenu(path.join(this.#options.outDir, `${this.#filename}.pdf`))
+    }
+  }
+
+  /**
+   * Reload preview
+   */
+  async reloadPreview() {
+    await this.#browser.reloadPreview()
   }
 
   /**
