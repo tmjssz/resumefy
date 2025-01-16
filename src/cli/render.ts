@@ -35,7 +35,9 @@ export const render = async (
   if (watch) {
     log.dim(`\nWatching ${underline(resumeFile)} for changes...`)
 
-    renderer.startFileServer(PORT)
+    if (!headless) {
+      renderer.startFileServer(PORT)
+    }
 
     fs.watch(resumeFile, async (_event, filename) => {
       if (filename) {
