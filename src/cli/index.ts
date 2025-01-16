@@ -1,8 +1,9 @@
 import { program } from 'commander'
 import { render } from './render.js'
 import { init } from './init.js'
+import { validate } from './validate.js'
 
-export const cli = program.version('1.3.0').description('A CLI for effortlessly rendering your JSON Resume')
+export const cli = program.version('1.3.0').description('A simple toolkit to bring your JSON Resume to life')
 
 cli
   .command('render', { isDefault: true })
@@ -20,3 +21,9 @@ cli
   .argument('[resume.json]', 'filename to create', 'resume.json')
   .option('-t, --theme <theme>', 'theme to use for rendering (sets theme in resume.json)')
   .action(init)
+
+cli
+  .command('validate')
+  .description('validate a resume.json file')
+  .argument('[resume.json]', 'path to resume JSON file', 'resume.json')
+  .action(validate)
