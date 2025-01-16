@@ -1,8 +1,23 @@
 # Resumefy example
 
-Steps to run this example:
+Simple example on how to use Resumefy.
 
-1. Install dependencies: `yarn install`
-2. Execute one of the folllwing scripts:
-   - For simply rendering the resume.json in headless mode: `yarn start`
-   - For opening the rendered resume in a browser window and watching for changes on the JSON file: `yarn dev`
+First, run `yarn install` to install dependencies.
+
+Execute one of the following scripts:
+
+## Headless mode
+
+For simply rendering the resume.json in headless mode:
+
+```shell
+yarn start
+```
+
+## Preview mode
+
+For opening the rendered resume in a browser window and watching for changes on the JSON file:
+
+```shell
+yarn dev
+```
