@@ -18,7 +18,7 @@ Resumefy renders a JSON resume to HTML and PDF with [Puppeteer](https://github.c
 To use Resumefy, first ensure you have installed it along with your desired theme.
 
 ```shell
-yarn add resumefy jsonresume-theme-even # or your theme of choice
+yarn add resumefy @tmjssz/jsonresume-theme-even # or your theme of choice
 ```
 
 ## CLI

@@ -25,9 +25,10 @@
     "node": ">=20"
   },
   "scripts": {
+    "lint": "eslint src",
     "build": "tsc --build",
-    "start": "node --import=tsx src/index.ts",
-    "lint": "eslint src"
+    "start": "tsx ./scripts/dev.ts ./node_modules/@jsonresume/schema/sample.resume.json --theme @tmjssz/jsonresume-theme-even",
+    "dev": "tsx watch ./scripts/dev.ts ./node_modules/@jsonresume/schema/sample.resume.json --theme @tmjssz/jsonresume-theme-even --watch"
   },
   "bin": {
     "resumefy": "bin/resumefy.js"
@@ -54,6 +55,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
+    "@tmjssz/jsonresume-theme-even": "^0.4.1",
     "@types/node": "^22.10.5",
     "eslint": "^9.18.0",
     "globals": "^15.14.0",
