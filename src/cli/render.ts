@@ -4,12 +4,11 @@ import { Renderer } from '../render/Renderer'
 import { log } from './log'
 import { RenderCliOptions } from './types'
 
-const PORT = 8080
-const SERVER_URL = `http://localhost:${PORT}`
+const serverUrl = (port: number) => `http://localhost:${port}`
 
 export const render = async (
   resumeFile: string,
-  { watch = false, headless = !watch, theme, outDir = '.' }: RenderCliOptions = {},
+  { watch = false, headless = !watch, theme, outDir = '.', port = 8080 }: RenderCliOptions = {},
 ) => {
   const renderer = await Renderer.launch(
     resumeFile,
@@ -26,7 +25,7 @@ export const render = async (
 
   await renderer
     .render()
-    .then(() => renderer.addMenu(SERVER_URL))
+    .then(() => renderer.addMenu(serverUrl(port)))
     .catch((err) => {
       log.error(err)
       if (!watch) {
@@ -38,7 +37,7 @@ export const render = async (
     log.dim(`\nWatching ${underline(resumeFile)} for changes...`)
 
     if (!headless) {
-      renderer.startFileServer(PORT)
+      renderer.startFileServer(port)
     }
 
     fs.watch(resumeFile, async (_event, filename) => {
@@ -46,7 +45,7 @@ export const render = async (
         log.dim(`\n[${new Date().toISOString()}]`, underline(filename), 'changed', '\n')
         await renderer
           .render()
-          .then(() => Promise.all([renderer.reloadPreview(), renderer.addMenu(SERVER_URL)]))
+          .then(() => Promise.all([renderer.reloadPreview(), renderer.addMenu(serverUrl(port))]))
           .catch(() => {})
       }
       return
