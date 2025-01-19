@@ -78,23 +78,23 @@ $ resumefy render --help
 
 ##### Options
 
-###### `outDir`
+###### `-d, --outDir`
 
 Target directory where the rendered HTML and PDF files will be stored. By default, it will be the same directory on which the command is run.
 
-###### `theme`
+###### `-t, --theme`
 
 Name of the theme to use for rendering, which overrides the `.meta.theme` field of your resume JSON file. Make sure that the theme is installed as dependency. For more info check the section [Theme resolution](#theme-resolution).
 
-###### `port`
+###### `-p, --port`
 
 Defines the port on which the local file server will be listening. This is only applicable in combination with the watch mode, because the server is used to serve the generated PDF file for preview in watch mode.
 
-###### `watch`
+###### `-w, --watch`
 
 With this option the command will open the resume in a bowser window and watch for changes on the resume.json file.
 
-###### `headless`
+###### `--headless`
 
 With this option the command will render the resume in the background without opening a browser window.
 
@@ -119,7 +119,7 @@ $ resumefy init --help
 
 ##### Options
 
-###### `theme`
+###### `-t, --theme`
 
 Name of the theme to use for rendering. It will be set as `.meta.theme` field of the generated resume JSON file. For more info check the section [Theme resolution](#theme-resolution).
 
