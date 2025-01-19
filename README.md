@@ -147,8 +147,12 @@ Resumefy does not provide a default theme. You must pick and install one yoursel
 
 Make sure that the theme is installed as dependency. To use a local theme, just add the path for that theme to the dependencies. E.g. for a theme called "my-local-theme", this entry would be needed with the correct path to the local package:
 
-```
-"my-local-theme": "file:./my-local-theme"
+```json
+  "dependencies": {
+    ...
+    "my-local-theme": "file:./my-local-theme",
+    ...
+  }
 ```
 
 ## API
