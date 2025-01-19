@@ -8,7 +8,7 @@ export const log = {
   error: (...args: unknown[]) => console.error(red('error'), ...args),
   debug: (...args: unknown[]) => console.debug(blue('debug'), ...args),
   success: (...args: unknown[]) => console.log(green('success'), ...args),
-  dim: (text: string | number | null | undefined) => console.log(dim(text)),
+  dim: (...args: (string | number | null | undefined)[]) => console.log(...args.map((arg) => dim(arg))),
   step:
     (step: number, total: number) =>
     (...args: unknown[]) => {

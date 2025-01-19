@@ -1,4 +1,4 @@
-import fsPromises from 'fs/promises'
+import { readFile } from 'fs/promises'
 import { validateObject } from './validate.js'
 import { ValidationError } from './error.js'
 
@@ -8,7 +8,7 @@ import { ValidationError } from './error.js'
  * @returns Promise resolving with a boolean whether resume JSON is valid
  */
 export const validate = async (resumeFile: string) => {
-  const resumeObject = JSON.parse(await fsPromises.readFile(resumeFile, 'utf-8'))
+  const resumeObject = JSON.parse(await readFile(resumeFile, 'utf-8'))
   try {
     return validateObject(resumeObject)
   } catch (err) {
