@@ -55,7 +55,7 @@ $ resumefy --help
 
 #### `render` (default)
 
-Renders resume in a browser window and exports it to HTML and PDF. The `[resume.json]` argument specifies the path to your JSON resume file. If no file path is provided, it defaults to `resume.json` in the current directory. The following options are available:
+Renders resume in a browser window and exports it to HTML and PDF. The `[resume.json]` argument specifies the path to your JSON resume file. If no file path is provided, it defaults to `resume.json` in the current directory. The command supports a watch mode for previewing the generated resume in a browser. The following options are available:
 
 ```shell
 $ resumefy render --help
@@ -70,10 +70,33 @@ $ resumefy render --help
   Options:
     -d, --outDir <outDir>  directory to save output files (default: ".")
     -t, --theme <theme>    theme to use for rendering (overrides theme specified in resume.json)
+    -p, --port <port>      port to run the file server on (default: "8080")
     -w, --watch            watch resume.json file for changes
     --headless             run browser in headless mode
     -h, --help             display help for command
 ```
+
+##### Options
+
+###### `outDir`
+
+Target directory where the rendered HTML and PDF files will be stored. By default, it will be the same directory on which the command is run.
+
+###### `theme`
+
+Name of the theme to use for rendering, which overrides the `.meta.theme` field of your resume JSON file. Make sure that the theme is installed as dependency. For more info check the section [Theme resolution](#theme-resolution).
+
+###### `port`
+
+Defines the port on which the local file server will be listening. This is only applicable in combination with the watch mode, because the server is used to serve the generated PDF file for preview in watch mode.
+
+###### `watch`
+
+With this option the command will open the resume in a bowser window and watch for changes on the resume.json file.
+
+###### `headless`
+
+With this option the command will render the resume in the background without opening a browser window.
 
 #### `init`
 
@@ -93,6 +116,12 @@ $ resumefy init --help
     -t, --theme <theme>  theme to use for rendering (sets theme in resume.json)
     -h, --help           display help for command
 ```
+
+##### Options
+
+###### `theme`
+
+Name of the theme to use for rendering. It will be set as `.meta.theme` field of the generated resume JSON file. For more info check the section [Theme resolution](#theme-resolution).
 
 #### `validate`
 
@@ -115,6 +144,12 @@ $ resumefy init --help
 ### Theme resolution
 
 Resumefy does not provide a default theme. You must pick and install one yourself, and specify your choice via the `--theme` option or the `.meta.theme` field of your resume JSON file.
+
+Make sure that the theme is installed as dependency. To use a local theme, just add the path for that theme to the dependencies. E.g. for a theme called "my-local-theme", this entry would be needed with the correct path to the local package:
+
+```
+"my-local-theme": "file:./my-local-theme"
+```
 
 ## API
 
