@@ -88,7 +88,7 @@ Specifies the theme to use for rendering, overriding the `.meta.theme` field in 
 
 ###### `-p, --port`
 
-Specifies the port on which the local file server will listen. This option is only applicable when used in combination with the [`--watch` option](#-w---watch) and without the [`--headless` option](#--headless), as the server is used to serve the generated PDF file for preview in headed watch mode.
+Specifies the port on which the local file server will listen. This option is only applicable when used in combination with the [`--watch`](#-w---watch) and without the [`--headless`](#--headless) option, as the server is used to serve the generated PDF file for preview in headed watch mode.
 
 ###### `-w, --watch`
 
