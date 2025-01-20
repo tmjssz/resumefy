@@ -24,6 +24,7 @@ Resumefy renders a JSON resume to HTML and PDF with [Puppeteer](https://github.c
 To get started with Resumefy, follow these steps:
 
 1. **Install Resumefy and a Theme**
+   
    First, install Resumefy along with your desired theme (in this case `@tmjssz/jsonresume-theme-even`) using Yarn or npm:
    ```shell
    # Yarn
@@ -32,16 +33,19 @@ To get started with Resumefy, follow these steps:
    npm install resumefy @tmjssz/jsonresume-theme-even
    ```
 2. **Create a resume JSON file**
+   
    Create a resume.json file with your resume data. You can use the [init](#init) command to generate a sample resume JSON file:
    ```shell
    resumefy init
    ```
 3. **Edit and validate JSON file**
+   
    Edit the previously generated JSON file and insert your data. You can validate your resume JSON file to ensure it conforms to the JSON Resume schema:
    ```shell
    resumefy validate resume.json
    ```
 4. **Render the resume**
+   
    Use the [render](#render-default) command to generate HTML and PDF versions of your resume:
    ```shell
    resumefy render resume.json -t @tmjssz/jsonresume-theme-even -d ./output
