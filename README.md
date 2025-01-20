@@ -60,7 +60,7 @@ To get started with Resumefy, follow these steps:
 
 ### Usage
 
-Resumefy provides three primary commands: `render`, `init`, and `validate`. These commands can be used as follows:
+Resumefy provides three commands: `render`, `init`, and `validate`. These commands can be used as follows:
 
 ```shell
 $ resumefy --help
