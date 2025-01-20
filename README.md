@@ -36,8 +36,9 @@ To get started with Resumefy, follow these steps:
    
    Create a resume.json file with your resume data. You can use the [init](#init) command to generate a sample resume JSON file:
    ```shell
-   resumefy init
+   resumefy init -t @tmjssz/jsonresume-theme-even
    ```
+   The generated file will include a `.meta.theme` field specifying the `@tmjssz/jsonresume-theme-even` theme to be used when rendering.
 3. **Edit and validate JSON file**
    
    Edit the previously generated JSON file and insert your data. You can validate your resume JSON file to ensure it conforms to the JSON Resume schema:
