@@ -41,9 +41,9 @@ To get started with Resumefy, follow these steps:
    ```  
    The generated file will include a `.meta.theme` field specifying the `@tmjssz/jsonresume-theme-even` theme to be used when rendering. Note that the theme option is optional during initialization, as you can also specify the theme in the render step if preferred.
 
-3. **Edit and validate JSON file**
+3. **Validate JSON file**
    
-   Edit the previously generated JSON file and insert your data. You can validate your resume JSON file to ensure it conforms to the JSON Resume schema:
+   While editing the JSON resume file you can validate your resume JSON file to ensure it conforms to the JSON Resume schema:
    ```shell
    resumefy validate resume.json
    ```
