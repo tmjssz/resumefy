@@ -151,6 +151,7 @@ Ensure that the theme is installed as a dependency. To use a local theme, add th
 "dependencies": {
   "my-local-theme": "file:./my-local-theme"
 }
+```
 
 ## API
 
