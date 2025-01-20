@@ -19,13 +19,34 @@ Resumefy renders a JSON resume to HTML and PDF with [Puppeteer](https://github.c
 - 👀 Watch resume file for changes
 - 💾 Export to HTML and PDF file
 
-## Installation
+## Getting started
 
-To use Resumefy, first ensure you have installed it along with your desired theme.
+To get started with Resumefy, follow these steps:
 
-```shell
-yarn add resumefy @tmjssz/jsonresume-theme-even # or your theme of choice
-```
+1. **Install Resumefy and a Theme**
+   First, install Resumefy along with your desired theme (in this case `@tmjssz/jsonresume-theme-even`) using Yarn or npm:
+   ```shell
+   # Yarn
+   yarn add resumefy @tmjssz/jsonresume-theme-even
+   # NPM
+   npm install resumefy @tmjssz/jsonresume-theme-even
+   ```
+2. **Create a resume JSON file**
+   Create a resume.json file with your resume data. You can use the [init](#init) command to generate a sample resume JSON file:
+   ```shell
+   resumefy init
+   ```
+3. **Edit and validate JSON file**
+   Edit the previously generated JSON file and insert your data. You can validate your resume JSON file to ensure it conforms to the JSON Resume schema:
+   ```shell
+   resumefy validate resume.json
+   ```
+4. **Render the resume**
+   Use the [render](#render-default) command to generate HTML and PDF versions of your resume:
+   ```shell
+   resumefy render resume.json -t @tmjssz/jsonresume-theme-even -d ./output
+   ```
+   This command will render the resume using the specified theme and save the output files in the `./output` directory.
 
 ## CLI
 
@@ -145,7 +166,6 @@ $ resumefy init --help
 
 Resumefy does not provide a default theme. You must select and install one yourself, specifying your choice via the [`--theme`](#-t---theme) option or the `.meta.theme` field in your resume JSON file. For example, to use the `@tmjssz/jsonresume-theme-even` theme, you can add the following to your `resume.json` file, which allows you to omit the `--theme` CLI option:
 
-
 ```json
 "meta": {
   "theme": "@tmjssz/jsonresume-theme-even"
@@ -154,7 +174,7 @@ Resumefy does not provide a default theme. You must select and install one yours
 
 #### Use a local theme
 
-Ensure that the theme is installed as a dependency. To use a local theme, add the path to that theme in the dependencies. For example, for a theme called `my-local-theme`, include the correct path to the local package:
+Ensure that the theme is installed as a dependency. To use a local theme, add the path to that theme in the dependencies. For example, for a theme called `my-local-theme`, include the correct path to the local package in your `package.json`:
 
 ```json
 "dependencies": {
