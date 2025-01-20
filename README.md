@@ -43,7 +43,7 @@ To get started with Resumefy, follow these steps:
 
 3. **Validate JSON file**
    
-   While editing the JSON resume file you can validate your resume JSON file to ensure it conforms to the JSON Resume schema:
+   While editing the JSON resume file, you can use the [validate](#validate) command to ensure it conforms to the JSON Resume schema:
    ```shell
    resumefy validate resume.json
    ```
