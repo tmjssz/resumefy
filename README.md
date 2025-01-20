@@ -32,26 +32,29 @@ To get started with Resumefy, follow these steps:
    # NPM
    npm install resumefy @tmjssz/jsonresume-theme-even
    ```
+
 2. **Create a resume JSON file**
    
    Create a resume.json file with your resume data. You can use the [init](#init) command to generate a sample resume JSON file:
    ```shell
    resumefy init -t @tmjssz/jsonresume-theme-even
-   ```
-   The generated file will include a `.meta.theme` field specifying the `@tmjssz/jsonresume-theme-even` theme to be used when rendering.
+   ```  
+   The generated file will include a `.meta.theme` field specifying the `@tmjssz/jsonresume-theme-even` theme to be used when rendering. Note that the theme option is optional during initialization, as you can also specify the theme in the render step if preferred.
+
 3. **Edit and validate JSON file**
    
    Edit the previously generated JSON file and insert your data. You can validate your resume JSON file to ensure it conforms to the JSON Resume schema:
    ```shell
    resumefy validate resume.json
    ```
+
 4. **Render the resume**
    
    Use the [render](#render-default) command to generate HTML and PDF versions of your resume:
    ```shell
    resumefy render resume.json -t @tmjssz/jsonresume-theme-even -d ./output
    ```
-   This command will render the resume using the specified theme and save the output files in the `./output` directory.
+  This command will render the resume using the specified theme and save the output files in the `./output` directory. Note that the theme option (`-t @tmjssz/jsonresume-theme-even`) is optional if the theme has already been specified in the `.meta.theme` field of the resume JSON file.
 
 ## CLI
 
