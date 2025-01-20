@@ -143,7 +143,16 @@ $ resumefy init --help
 
 ### Theme resolution
 
-Resumefy does not provide a default theme. You must select and install one yourself, specifying your choice via the `--theme` option or the `.meta.theme` field in your resume JSON file.
+Resumefy does not provide a default theme. You must select and install one yourself, specifying your choice via the [`--theme`](#-t---theme) option or the `.meta.theme` field in your resume JSON file. For example, to use the `@tmjssz/jsonresume-theme-even` theme, you can add the following to your `resume.json` file, which allows you to omit the `--theme` CLI option:
+
+
+```json
+"meta": {
+  "theme": "@tmjssz/jsonresume-theme-even"
+}
+```
+
+#### Use a local theme
 
 Ensure that the theme is installed as a dependency. To use a local theme, add the path to that theme in the dependencies. For example, for a theme called `my-local-theme`, include the correct path to the local package:
 
