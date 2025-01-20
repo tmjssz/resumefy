@@ -54,7 +54,7 @@ To get started with Resumefy, follow these steps:
    ```shell
    resumefy render resume.json -t @tmjssz/jsonresume-theme-even -d ./output
    ```
-  This command will render the resume using the specified theme and save the output files in the `./output` directory. Note that the theme option (`-t @tmjssz/jsonresume-theme-even`) is optional if the theme has already been specified in the `.meta.theme` field of the resume JSON file.
+   This command will render the resume using the specified theme and save the output files in the `./output` directory. Note that the theme option (`-t @tmjssz/jsonresume-theme-even`) is optional if the theme has already been specified in the `.meta.theme` field of the resume JSON file.
 
 ## CLI
 
