@@ -1,5 +1,7 @@
 # Resumefy
 
+![build status](https://github.com/tmjssz/resumefy/actions/workflows/build.yml/badge.svg)
+
 > A simple toolkit to bring your [JSON Resume](https://jsonresume.org/) to life
 
 Resumefy renders a JSON resume to HTML and PDF with [Puppeteer](https://github.com/puppeteer/puppeteer). It uses [Resumed](https://github.com/rbardini/resumed) under the hood to render the resume and provides both a CLI and a direct Typescript API.
