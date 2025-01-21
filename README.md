@@ -2,6 +2,7 @@
 
 ![build status](https://github.com/tmjssz/resumefy/actions/workflows/build.yml/badge.svg)
 ![NPM Version](https://img.shields.io/npm/v/resumefy)
+![dependency status](https://img.shields.io/librariesio/github/tmjssz/resumefy)
 
 > A simple toolkit to bring your [JSON Resume](https://jsonresume.org/) to life
 
