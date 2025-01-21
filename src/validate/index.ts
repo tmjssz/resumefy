@@ -10,7 +10,7 @@ export const validate = async (resumeFile: string) => {
   const resumeObject = JSON.parse(await readFile(resumeFile, 'utf-8'))
   try {
     return validateObject(resumeObject)
-  } catch (err) {
+  } catch {
     return false
   }
 }
