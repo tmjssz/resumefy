@@ -1,6 +1,5 @@
 import { readFile } from 'fs/promises'
 import { validateObject } from './validate'
-import { ValidationError } from './error'
 
 /**
  * Validate a resume JSON file.
@@ -12,6 +11,6 @@ export const validate = async (resumeFile: string) => {
   try {
     return validateObject(resumeObject)
   } catch (err) {
-    return err instanceof ValidationError
+    return false
   }
 }
