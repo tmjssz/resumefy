@@ -1,9 +1,9 @@
 import { TimeoutError, type Page } from 'puppeteer'
 import { promises as fs } from 'fs'
 import path from 'path'
-import type { ResumeBrowser } from './ResumeBrowser.js'
-import { log } from '../cli/log.js'
-import { menu } from './menu.js'
+import type { ResumeBrowser } from './ResumeBrowser'
+import { log } from '../cli/log'
+import { menu } from './menu'
 
 /**
  * Represents a page in the browser

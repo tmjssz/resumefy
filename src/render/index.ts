@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer'
-import { Renderer } from './Renderer.js'
-import { RenderOptions } from '../types.js'
+import { Renderer } from './Renderer'
+import { RenderOptions } from '../types'
 
 /**
  * Renders a resume from a JSON file to HTML and PDF.

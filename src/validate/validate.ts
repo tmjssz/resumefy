@@ -1,5 +1,5 @@
 import resumeSchema from '@jsonresume/schema'
-import { ValidationError } from './error.js'
+import { ValidationError } from './error'
 
 /**
  * Validate given resume object.

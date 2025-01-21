@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises'
-import { validateObject } from './validate.js'
-import { ValidationError } from './error.js'
+import { validateObject } from './validate'
+import { ValidationError } from './error'
 
 /**
  * Validate a resume JSON file.

@@ -26,7 +26,7 @@
   },
   "scripts": {
     "lint": "eslint src",
-    "build": "tsc --build",
+    "build": "tsc --build && tsc-alias",
     "start": "tsx ./scripts/dev.ts ./node_modules/@jsonresume/schema/sample.resume.json --theme @tmjssz/jsonresume-theme-even",
     "dev": "tsx watch ./scripts/dev.ts ./node_modules/@jsonresume/schema/sample.resume.json --theme @tmjssz/jsonresume-theme-even --watch"
   },
@@ -62,6 +62,7 @@
     "eslint": "^9.18.0",
     "globals": "^15.14.0",
     "prettier": "^3.4.2",
+    "tsc-alias": "1.8.10",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.19.1"

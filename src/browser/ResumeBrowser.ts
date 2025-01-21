@@ -2,7 +2,7 @@ import { strip } from 'ansicolor'
 import type { Browser, Page } from 'puppeteer'
 import ErrorHtmlRenderer from 'error-html'
 import { existsSync, promises as fs } from 'fs'
-import { ResumePage } from './ResumePage.js'
+import { ResumePage } from './ResumePage'
 
 /**
  * Represents a browser to render resume

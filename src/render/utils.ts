@@ -1,6 +1,6 @@
 import { underline, yellow } from 'ansicolor'
 import { basename, extname } from 'path'
-import { Resume, Theme } from '../types.js'
+import { Resume, Theme } from '../types'
 
 /**
  * Get the filename from a path
