@@ -29,7 +29,9 @@
     "build": "tsc --build && tsc-alias",
     "start": "tsx ./scripts/dev.ts ./node_modules/@jsonresume/schema/sample.resume.json --theme @tmjssz/jsonresume-theme-even",
     "dev": "tsx watch ./scripts/dev.ts ./node_modules/@jsonresume/schema/sample.resume.json --theme @tmjssz/jsonresume-theme-even --watch",
-    "test": "vitest"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest watch"
   },
   "bin": {
     "resumefy": "bin/resumefy.js"
