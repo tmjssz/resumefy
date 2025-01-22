@@ -1,5 +1,5 @@
 import sampleResume from '@jsonresume/schema/sample.resume.json' with { type: 'json' }
-import { promises as fs } from 'fs'
+import { writeFile } from 'fs/promises'
 
 /**
  * Initialize a new resume JSON file with sample data and optional theme.
@@ -8,5 +8,5 @@ import { promises as fs } from 'fs'
  */
 export const init = async (resumeFile: string, theme?: string) => {
   const resume = theme ? { ...sampleResume, meta: { ...sampleResume.meta, theme } } : sampleResume
-  return fs.writeFile(resumeFile, JSON.stringify(resume, null, 2))
+  return writeFile(resumeFile, JSON.stringify(resume, null, 2))
 }
