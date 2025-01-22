@@ -3,22 +3,27 @@ import express from 'express'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import fsPromises from 'fs/promises'
 import { Renderer } from './Renderer'
-import * as browser from '../browser'
 import * as resumed from 'resumed'
 import * as validateObject from '../validate/validate'
 import { RenderOptions } from '../types'
 import * as utils from './utils'
 import { log } from '../cli/log'
 import * as startServer from '../browser/server'
+import { ResumeBrowser } from '../browser'
 
 vi.mock('fs/promises')
 vi.mock('resumed')
+
+vi.mock('../browser', () => ({
+  ResumeBrowser: {
+    launch: vi.fn().mockResolvedValue({ foo: 'bar' }),
+  },
+}))
 
 describe('Renderer', () => {
   const getFilenameSpy = vi.spyOn(utils, 'getFilename')
   const loadThemeSpy = vi.spyOn(utils, 'loadTheme')
   const readFileSpy = vi.spyOn(fsPromises, 'readFile')
-  const ResumeBrowserSpy = vi.spyOn(browser, 'ResumeBrowser')
   const resumedRenderSpy = vi.spyOn(resumed, 'render')
   const validateObjectSpy = vi.spyOn(validateObject, 'validateObject')
   const stepLogSpy = vi.spyOn(log, 'step')
@@ -41,7 +46,7 @@ describe('Renderer', () => {
     error: vi.fn(),
     addMenu: vi.fn(),
     reloadPreview: vi.fn(),
-  } as unknown as browser.ResumeBrowser
+  } as unknown as ResumeBrowser
   const mockRenderResult = '<span>rendered resume</span>'
   const mockThemeModule = { render: vi.fn() }
   const mockStepLogFn = vi.fn()
@@ -50,7 +55,6 @@ describe('Renderer', () => {
     getFilenameSpy.mockReturnValue(fileName)
     loadThemeSpy.mockResolvedValue(mockThemeModule)
     readFileSpy.mockResolvedValue(JSON.stringify(sampleResume))
-    ResumeBrowserSpy.mockImplementation(() => mockResumeBrowser)
     validateObjectSpy.mockReturnValue(true)
     resumedRenderSpy.mockResolvedValue(mockRenderResult)
     stepLogSpy.mockImplementation(() => mockStepLogFn)
@@ -68,6 +72,21 @@ describe('Renderer', () => {
     const renderer = new Renderer(resumeFile, options, mockResumeBrowser)
     expect(renderer).toBeDefined()
     expect(getFilenameSpy).toHaveBeenCalledWith(resumeFile)
+  })
+
+  describe('launch', () => {
+    it('should initialize with correct properties', async () => {
+      const renderer = await Renderer.launch(
+        resumeFile,
+        options,
+        { defaultViewport: null, headless: true },
+        { watch: true },
+      )
+      expect(renderer).toBeDefined()
+      expect(ResumeBrowser.launch).toHaveBeenCalledTimes(1)
+      expect(ResumeBrowser.launch).toHaveBeenCalledWith({ defaultViewport: null, headless: true })
+      expect(getFilenameSpy).toHaveBeenCalledWith(resumeFile)
+    })
   })
 
   describe('render', () => {
