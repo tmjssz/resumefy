@@ -1,4 +1,5 @@
 import sampleResume from '@jsonresume/schema/sample.resume.json' with { type: 'json' }
+import express from 'express'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import fsPromises from 'fs/promises'
 import { Browser } from 'puppeteer'
@@ -58,7 +59,7 @@ describe('Renderer', () => {
     logSpy.mockImplementation(() => {})
     successLogSpy.mockImplementation(() => {})
     errorLogSpy.mockImplementation(() => {})
-    startServerSpy.mockImplementation(() => ({}) as any)
+    startServerSpy.mockImplementation(() => express())
   })
 
   afterEach(() => {
