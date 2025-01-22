@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ValidationError } from 'jsonschema'
 import { validateObject } from './validate'
 import resumeSchema from '@jsonresume/schema'
@@ -9,14 +10,17 @@ describe('validateObject', () => {
     summary: 'A summary',
   }
 
-  const validateSpy = jest.spyOn(resumeSchema, 'validate')
+  const validateSpy = vi.spyOn(resumeSchema, 'validate')
 
   beforeEach(() => {
-    jest.clearAllMocks()
     validateSpy.mockImplementation((_resume, callback) => {
       callback([], true)
       return true
     })
+  })
+
+  afterEach(() => {
+    vi.resetAllMocks()
   })
 
   it('should validate a resume object', () => {
@@ -33,7 +37,7 @@ describe('validateObject', () => {
       return false
     })
 
-    expect(() => validateObject(resume)).toThrow('Validation of resume JSON file failed')
+    expect(() => validateObject(resume)).toThrowError('Validation of resume JSON file failed')
 
     expect(validateSpy).toHaveBeenCalledTimes(1)
     expect(validateSpy).toHaveBeenCalledWith(resume, expect.any(Function))

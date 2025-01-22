@@ -1,8 +1,11 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import fsPromises from 'fs/promises'
 import { ValidationError as ValidationErrorJsonSchema } from 'jsonschema'
 import * as validateObject from './validate'
 import { validate } from './index'
 import { ValidationError } from './error'
+
+vi.mock('fs/promises')
 
 describe('validate', () => {
   const resume = {
@@ -11,13 +14,16 @@ describe('validate', () => {
     summary: 'A summary',
   }
 
-  const readFileSpy = jest.spyOn(fsPromises, 'readFile')
-  const validateObjectSpy = jest.spyOn(validateObject, 'validateObject')
+  const readFileSpy = vi.spyOn(fsPromises, 'readFile')
+  const validateObjectSpy = vi.spyOn(validateObject, 'validateObject')
 
   beforeEach(() => {
-    jest.clearAllMocks()
     readFileSpy.mockResolvedValue(JSON.stringify(resume))
     validateObjectSpy.mockReturnValue(true)
+  })
+
+  afterEach(() => {
+    vi.resetAllMocks()
   })
 
   it('should validate a resume object', async () => {

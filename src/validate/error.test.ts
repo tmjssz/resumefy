@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 import { ValidationError as ValidationErrorJsonSchema } from 'jsonschema'
 import { ValidationError } from './error'
 import { yellow } from 'ansicolor'
