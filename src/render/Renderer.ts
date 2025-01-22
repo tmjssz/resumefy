@@ -41,7 +41,7 @@ export class Renderer {
    * Parse resume JSON file
    * @param log Optional log function
    */
-  async parse(log: ConsoleLog = () => {}) {
+  async #parse(log: ConsoleLog = () => {}) {
     log('📁 ', `Loading ${underline(this.#resumeFile)}`)
     this.#resume = JSON.parse(await readFile(this.#resumeFile, 'utf-8'))
   }
@@ -50,16 +50,16 @@ export class Renderer {
    * Validate resume JSON
    * @param log Optional log function
    */
-  async validate(log: ConsoleLog = () => {}) {
+  async #validate(log: ConsoleLog = () => {}) {
     log('🔎 ', 'Validating resume')
-    validateObject(this.#resume)
+    await validateObject(this.#resume)
   }
 
   /**
    * Load theme module
    * @param log Optional log function
    */
-  async loadTheme(log: ConsoleLog = () => {}): Promise<void> {
+  async #loadTheme(log: ConsoleLog = () => {}): Promise<void> {
     log('✨ ', 'Loading theme')
     this.#themeModule = await loadTheme(this.#options.theme, this.#resume)
   }
@@ -68,19 +68,16 @@ export class Renderer {
    * Generate HTML from resume JSON
    * @param log Optional log function
    */
-  async generateHtml(log: ConsoleLog = () => {}) {
+  async #generateHtml(log: ConsoleLog = () => {}) {
     log('📎 ', 'Rendering resume')
-    if (!this.#themeModule) {
-      throw new Error('Theme not loaded')
-    }
-    this.#resumeHtml = await resumedRender(this.#resume, this.#themeModule)
+    this.#resumeHtml = await resumedRender(this.#resume, this.#themeModule!)
   }
 
   /**
    * Render browser page
    * @param log Optional log function
    */
-  async renderPage(log: ConsoleLog = () => {}) {
+  async #renderPage(log: ConsoleLog = () => {}) {
     log('🌐 ', 'Rendering browser page')
     await this.#browser.render(this.#resumeHtml)
   }
@@ -89,7 +86,7 @@ export class Renderer {
    * Write HTML and PDF files
    * @param log Optional log function
    */
-  async writeFiles(log: ConsoleLog = () => {}) {
+  async #writeFiles(log: ConsoleLog = () => {}) {
     log('💾 ', 'Writing files')
     await this.#browser.writeFiles(this.#options.outDir, this.#filename)
   }
@@ -99,12 +96,12 @@ export class Renderer {
    */
   async render() {
     const steps = [
-      this.parse.bind(this),
-      this.validate.bind(this),
-      this.loadTheme.bind(this),
-      this.generateHtml.bind(this),
-      this.renderPage.bind(this),
-      this.writeFiles.bind(this),
+      this.#parse.bind(this),
+      this.#validate.bind(this),
+      this.#loadTheme.bind(this),
+      this.#generateHtml.bind(this),
+      this.#renderPage.bind(this),
+      this.#writeFiles.bind(this),
     ]
 
     await steps
