@@ -2,7 +2,6 @@ import sampleResume from '@jsonresume/schema/sample.resume.json' with { type: 'j
 import express from 'express'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import fsPromises from 'fs/promises'
-import { Browser } from 'puppeteer'
 import { Renderer } from './Renderer'
 import * as browser from '../browser'
 import * as resumed from 'resumed'
@@ -35,7 +34,6 @@ describe('Renderer', () => {
     outDir: './output',
   }
 
-  const mockBrowser = {} as Browser
   const mockResumeBrowser = {
     render: vi.fn(),
     writeFiles: vi.fn(),
@@ -67,14 +65,14 @@ describe('Renderer', () => {
   })
 
   it('should initialize with correct properties', () => {
-    const renderer = new Renderer(resumeFile, options, mockBrowser)
+    const renderer = new Renderer(resumeFile, options, mockResumeBrowser)
     expect(renderer).toBeDefined()
     expect(getFilenameSpy).toHaveBeenCalledWith(resumeFile)
   })
 
   describe('render', () => {
     it('should perform all render steps', async () => {
-      const renderer = new Renderer(resumeFile, options, mockBrowser)
+      const renderer = new Renderer(resumeFile, options, mockResumeBrowser)
 
       const browserRenderSpy = vi.spyOn(mockResumeBrowser, 'render')
 
@@ -103,7 +101,7 @@ describe('Renderer', () => {
 
     describe('if has cliOptions', () => {
       it('should print log for each render step', async () => {
-        const renderer = new Renderer(resumeFile, options, mockBrowser, { watch: true })
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser, { watch: true })
 
         await renderer.render()
 
@@ -119,7 +117,7 @@ describe('Renderer', () => {
       })
 
       it('should print success log', async () => {
-        const renderer = new Renderer(resumeFile, options, mockBrowser, { watch: true })
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser, { watch: true })
 
         await renderer.render()
 
@@ -140,7 +138,7 @@ describe('Renderer', () => {
       })
 
       it('should NOT close browser if `watch` option is true', async () => {
-        const renderer = new Renderer(resumeFile, options, mockBrowser, { watch: true })
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser, { watch: true })
 
         await renderer.render()
 
@@ -148,7 +146,7 @@ describe('Renderer', () => {
       })
 
       it('should close browser if `watch` option is false', async () => {
-        const renderer = new Renderer(resumeFile, options, mockBrowser, { headless: true, watch: false })
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser, { headless: true, watch: false })
 
         await renderer.render()
 
@@ -156,7 +154,7 @@ describe('Renderer', () => {
       })
 
       it('should close browser if `watch` option is not present', async () => {
-        const renderer = new Renderer(resumeFile, options, mockBrowser, { headless: true })
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser, { headless: true })
 
         await renderer.render()
 
@@ -164,7 +162,7 @@ describe('Renderer', () => {
       })
 
       it('should log error if any render step fails', async () => {
-        const renderer = new Renderer(resumeFile, options, mockBrowser, { watch: true })
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser, { watch: true })
 
         const renderError = new Error('render error')
 
@@ -179,7 +177,7 @@ describe('Renderer', () => {
 
     describe('shoud throw error if any render step fails', () => {
       it('reading file fails', async () => {
-        const renderer = new Renderer(resumeFile, options, mockBrowser)
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser)
 
         const readFileError = new Error('read file error')
 
@@ -193,7 +191,7 @@ describe('Renderer', () => {
       })
 
       it('validation fails', async () => {
-        const renderer = new Renderer(resumeFile, options, mockBrowser)
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser)
 
         const validateError = new Error('validation error')
 
@@ -207,7 +205,7 @@ describe('Renderer', () => {
       })
 
       it('loading theme fails', async () => {
-        const renderer = new Renderer(resumeFile, options, mockBrowser)
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser)
 
         const loadThemeError = new Error('loading theme error')
 
@@ -221,7 +219,7 @@ describe('Renderer', () => {
       })
 
       it('resume rendering fails', async () => {
-        const renderer = new Renderer(resumeFile, options, mockBrowser)
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser)
 
         const renderError = new Error('resume render error')
 
@@ -237,7 +235,7 @@ describe('Renderer', () => {
       it('browser rendering fails', async () => {
         const browserRenderSpy = vi.spyOn(mockResumeBrowser, 'render')
 
-        const renderer = new Renderer(resumeFile, options, mockBrowser)
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser)
 
         const renderError = new Error('browser render error')
 
@@ -253,7 +251,7 @@ describe('Renderer', () => {
       it('writing files fails', async () => {
         const writeFilesSpy = vi.spyOn(mockResumeBrowser, 'writeFiles')
 
-        const renderer = new Renderer(resumeFile, options, mockBrowser)
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser)
 
         const writeFilesError = new Error('write files error')
 
@@ -270,7 +268,7 @@ describe('Renderer', () => {
 
   describe('startFileServer', () => {
     it('should start file server listening on default port value', () => {
-      const renderer = new Renderer(resumeFile, options, mockBrowser)
+      const renderer = new Renderer(resumeFile, options, mockResumeBrowser)
 
       renderer.startFileServer()
 
@@ -279,7 +277,7 @@ describe('Renderer', () => {
     })
 
     it('should start file server listening on passed port', () => {
-      const renderer = new Renderer(resumeFile, options, mockBrowser)
+      const renderer = new Renderer(resumeFile, options, mockResumeBrowser)
 
       renderer.startFileServer(3333)
 
@@ -292,7 +290,7 @@ describe('Renderer', () => {
     const serverUrl = 'http://localhost:8080'
 
     it('should add menu in browser if `watch` option is true', () => {
-      const renderer = new Renderer(resumeFile, options, mockBrowser, { watch: true })
+      const renderer = new Renderer(resumeFile, options, mockResumeBrowser, { watch: true })
 
       renderer.addMenu(serverUrl)
 
@@ -302,7 +300,7 @@ describe('Renderer', () => {
 
     describe('should NOT add menu in browser', () => {
       it('if `watch` option is false', () => {
-        const renderer = new Renderer(resumeFile, options, mockBrowser, { watch: false })
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser, { watch: false })
 
         renderer.addMenu(serverUrl)
 
@@ -310,7 +308,7 @@ describe('Renderer', () => {
       })
 
       it('if `watch` option is not present', () => {
-        const renderer = new Renderer(resumeFile, options, mockBrowser, {})
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser, {})
 
         renderer.addMenu(serverUrl)
 
@@ -318,7 +316,7 @@ describe('Renderer', () => {
       })
 
       it('if not cliOptions defined', () => {
-        const renderer = new Renderer(resumeFile, options, mockBrowser)
+        const renderer = new Renderer(resumeFile, options, mockResumeBrowser)
 
         renderer.addMenu(serverUrl)
 
@@ -329,7 +327,7 @@ describe('Renderer', () => {
 
   describe('reloadPreview', () => {
     it('should call `reloadPreview` on browser instance', () => {
-      const renderer = new Renderer(resumeFile, options, mockBrowser)
+      const renderer = new Renderer(resumeFile, options, mockResumeBrowser)
 
       renderer.reloadPreview()
 
@@ -339,7 +337,7 @@ describe('Renderer', () => {
 
   describe('close', () => {
     it('should call `close` on browser instance', () => {
-      const renderer = new Renderer(resumeFile, options, mockBrowser)
+      const renderer = new Renderer(resumeFile, options, mockResumeBrowser)
 
       renderer.close()
 

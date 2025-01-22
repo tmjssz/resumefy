@@ -1,13 +1,17 @@
-import { beforeEach, afterEach, describe, it, expect, vi } from 'vitest'
-import puppeteer, { Browser } from 'puppeteer'
+import { afterEach, describe, it, expect, vi } from 'vitest'
 import { render } from './index'
-import * as renderer from './Renderer'
+import { Renderer } from './Renderer'
 import { RenderOptions } from '../types'
 
 vi.mock('./Renderer', () => ({
-  Renderer: vi.fn().mockImplementation(() => ({
-    render: vi.fn(),
-  })),
+  Renderer: {
+    launch: vi.fn().mockResolvedValue({
+      render: vi.fn(() => Promise.resolve()),
+      addMenu: vi.fn(),
+      startFileServer: vi.fn(),
+      reloadPreview: vi.fn(),
+    }),
+  },
 }))
 
 describe('render', () => {
@@ -17,17 +21,6 @@ describe('render', () => {
     outDir: './output',
   }
 
-  const mockBrowser = { foo: 'bar' } as unknown as Browser
-  const mockRender = vi.fn()
-
-  const launchSpy = vi.spyOn(puppeteer, 'launch')
-  const rendererSpy = vi.spyOn(renderer, 'Renderer')
-
-  beforeEach(() => {
-    launchSpy.mockResolvedValue(mockBrowser)
-    rendererSpy.mockReturnValue({ render: mockRender } as unknown as renderer.Renderer)
-  })
-
   afterEach(() => {
     vi.resetAllMocks()
   })
@@ -35,10 +28,10 @@ describe('render', () => {
   it('should launch puppeteer and call Renderer.render', async () => {
     await render(resumeFile, options)
 
-    expect(launchSpy).toHaveBeenCalledTimes(1)
-    expect(launchSpy).toHaveBeenCalledWith({ defaultViewport: null, headless: true })
-    expect(rendererSpy).toHaveBeenCalledTimes(1)
-    expect(rendererSpy).toHaveBeenCalledWith(resumeFile, options, mockBrowser)
-    expect(mockRender).toHaveBeenCalledTimes(1)
+    expect(Renderer.launch).toHaveBeenCalledTimes(1)
+    expect(Renderer.launch).toHaveBeenCalledWith(resumeFile, options, { defaultViewport: null, headless: true })
+
+    const renderer = await Renderer.launch(resumeFile, options, { defaultViewport: null, headless: true })
+    expect(renderer.render).toHaveBeenCalledTimes(1)
   })
 })
