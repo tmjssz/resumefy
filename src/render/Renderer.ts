@@ -3,7 +3,7 @@ import { readFile } from 'fs/promises'
 import path from 'path'
 import { Browser } from 'puppeteer'
 import { render as resumedRender } from 'resumed'
-import { ResumeBrowser } from '../browser/index'
+import { ResumeBrowser } from '../browser'
 import { getFilename, loadTheme } from './utils'
 import { ConsoleLog, RenderOptions, Resume, Theme } from '../types'
 import { log } from '../cli/log'
@@ -121,11 +121,11 @@ export class Renderer {
 
     if (this.#cliOptions) {
       log.success('Resume rendered successfully 🎉')
-      console.log('Files written:')
+      log.log('Files written:')
 
       const files = ['html', 'pdf']
       files.forEach((ext) => {
-        console.log(
+        log.log(
           `- ${bright(ext)}\t`,
           underline(path.resolve(path.join(this.#options.outDir, `${this.#filename}.${ext}`))),
         )
