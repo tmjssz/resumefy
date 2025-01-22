@@ -1,4 +1,3 @@
-import puppeteer from 'puppeteer'
 import { Renderer } from './Renderer'
 import { RenderOptions } from '../types'
 
@@ -11,7 +10,6 @@ import { RenderOptions } from '../types'
  * @returns A promise resolving when rendering is complete
  */
 export const render = async (resumeFile: string, options: RenderOptions) => {
-  const browser = await puppeteer.launch({ defaultViewport: null, headless: true })
-  const renderer = new Renderer(resumeFile, options, browser)
+  const renderer = await Renderer.launch(resumeFile, options, { defaultViewport: null, headless: true })
   return renderer.render()
 }

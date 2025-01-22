@@ -1,7 +1,7 @@
 import { bright, underline } from 'ansicolor'
 import { readFile } from 'fs/promises'
 import path from 'path'
-import { Browser } from 'puppeteer'
+import { LaunchOptions } from 'puppeteer'
 import { render as resumedRender } from 'resumed'
 import { ResumeBrowser } from '../browser'
 import { getFilename, loadTheme } from './utils'
@@ -27,14 +27,24 @@ export class Renderer {
   constructor(
     resumeFile: string,
     { theme, outDir = '.' }: RenderOptions,
-    browser: Browser,
+    browser: ResumeBrowser,
     cliOptions?: RenderCliOptions,
   ) {
     this.#resumeFile = resumeFile
     this.#filename = getFilename(this.#resumeFile)
     this.#options = { theme, outDir }
-    this.#browser = new ResumeBrowser(browser)
+    this.#browser = browser
     this.#cliOptions = cliOptions
+  }
+
+  static async launch(
+    resumeFile: string,
+    { theme, outDir = '.' }: RenderOptions,
+    options: LaunchOptions,
+    cliOptions?: RenderCliOptions,
+  ) {
+    const browser = await ResumeBrowser.launch(options)
+    return new Renderer(resumeFile, { theme, outDir }, browser, cliOptions)
   }
 
   /**

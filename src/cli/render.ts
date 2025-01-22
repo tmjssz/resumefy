@@ -1,6 +1,5 @@
 import { underline } from 'ansicolor'
 import fs from 'fs'
-import puppeteer from 'puppeteer'
 import { Renderer } from '../render/Renderer'
 import { log } from './log'
 import { RenderCliOptions } from './types'
@@ -12,15 +11,18 @@ export const render = async (
   resumeFile: string,
   { watch = false, headless = !watch, theme, outDir = '.' }: RenderCliOptions = {},
 ) => {
-  const browser = await puppeteer.launch({
-    timeout: 0,
-    defaultViewport: null,
-    headless,
-    pipe: true,
-    args: ['--no-sandbox'],
-  })
-
-  const renderer = new Renderer(resumeFile, { theme: theme!, outDir }, browser, { watch, headless })
+  const renderer = await Renderer.launch(
+    resumeFile,
+    { theme: theme!, outDir },
+    {
+      timeout: 0,
+      defaultViewport: null,
+      headless,
+      pipe: true,
+      args: ['--no-sandbox'],
+    },
+    { watch, headless },
+  )
 
   await renderer
     .render()
