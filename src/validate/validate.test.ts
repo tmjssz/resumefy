@@ -37,7 +37,7 @@ describe('validateObject', () => {
       return false
     })
 
-    expect(() => validateObject(resume)).toThrowError('Validation of resume JSON file failed')
+    expect(() => validateObject(resume)).toThrow('Validation of resume JSON file failed')
 
     expect(validateSpy).toHaveBeenCalledTimes(1)
     expect(validateSpy).toHaveBeenCalledWith(resume, expect.any(Function))
