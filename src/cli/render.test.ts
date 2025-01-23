@@ -148,7 +148,7 @@ describe('render', () => {
       await mockFileChange(resumeFile)
 
       expect(log.dim).toHaveBeenCalledTimes(2)
-      expect(log.dim).toHaveBeenCalledWith('\n[2000-02-01T12:00:00.000Z]', resumeFile, 'changed', '\n')
+      expect(log.dim).toHaveBeenCalledWith(`\n[${date.toISOString()}]`, resumeFile, 'changed', '\n')
       expect(Renderer.prototype.reloadPreview).toHaveBeenCalledTimes(1)
       expect(Renderer.prototype.addMenu).toHaveBeenCalledTimes(2)
     })
