@@ -2,7 +2,8 @@ import { strip } from 'ansicolor'
 import type { Browser, LaunchOptions, Page } from 'puppeteer'
 import puppeteer from 'puppeteer'
 import ErrorHtmlRenderer from 'error-html'
-import { existsSync, promises as fs } from 'fs'
+import { existsSync } from 'fs'
+import { mkdir } from 'fs/promises'
 import { ResumePage } from './ResumePage'
 
 /**
@@ -85,7 +86,7 @@ export class ResumeBrowser {
    */
   async writeFiles(dir: string, name: string) {
     if (!existsSync(dir)) {
-      await fs.mkdir(dir)
+      await mkdir(dir)
     }
 
     const page = await this.getPage(0)
@@ -113,7 +114,7 @@ export class ResumeBrowser {
       } else {
         // Otherwise open new preview page and navigate to file
         const previewPage = await this.#browser.newPage()
-        previewPage.goto(fileUrl)
+        await previewPage.goto(fileUrl)
         this.#previewPage = previewPage
       }
     }
