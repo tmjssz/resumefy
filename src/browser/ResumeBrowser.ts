@@ -18,7 +18,7 @@ export class ResumeBrowser {
     this.#errorHtmlRenderer = new ErrorHtmlRenderer({ appPath: process.cwd() })
   }
 
-  static async launch(options: LaunchOptions) {
+  static async launch(options?: LaunchOptions) {
     const puppeteerBrowser = await puppeteer.launch(options)
     return new ResumeBrowser(puppeteerBrowser)
   }

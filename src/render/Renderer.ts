@@ -40,7 +40,7 @@ export class Renderer {
   static async launch(
     resumeFile: string,
     { theme, outDir = '.' }: RenderOptions,
-    options: LaunchOptions,
+    options?: LaunchOptions,
     cliOptions?: RenderCliOptions,
   ) {
     const browser = await ResumeBrowser.launch(options)
