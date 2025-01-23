@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { underline, yellow } from 'ansicolor'
 import { getFilename, loadTheme } from './utils'
 import { Resume } from '../types'
 
@@ -21,7 +20,7 @@ describe('getFilename', () => {
 
   it('should throw an error if filename cannot be determined', () => {
     const path = ''
-    expect(() => getFilename(path)).toThrow(`Could not get filename from path: ${underline(path)}`)
+    expect(() => getFilename(path)).toThrow('Could not get filename from path: ')
   })
 })
 
@@ -48,14 +47,14 @@ describe('loadTheme', () => {
 
   it('should throw an error if no theme is specified', async () => {
     await expect(() => loadTheme()).rejects.toThrow(
-      `No theme name specified. Use "${yellow('--theme')}" option or set "${yellow('meta.theme')}" in resume JSON file.`,
+      'No theme name specified. Use "--theme" option or set "meta.theme" in resume JSON file.',
     )
   })
 
   it('should throw an error if the theme cannot be loaded', async () => {
     const themeName = 'non-existent-theme'
     await expect(() => loadTheme(themeName)).rejects.toThrow(
-      `Could not load theme "${yellow(themeName)}". Is it installed?`,
+      'Could not load theme "non-existent-theme". Is it installed?',
     )
   })
 })
