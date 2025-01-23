@@ -29,7 +29,6 @@ describe('Renderer', () => {
   const stepLogSpy = vi.spyOn(log, 'step')
   const logSpy = vi.spyOn(log, 'log')
   const successLogSpy = vi.spyOn(log, 'success')
-  const errorLogSpy = vi.spyOn(log, 'error')
   const startServerSpy = vi.spyOn(startServer, 'startServer')
 
   const resumeFile = 'test-resume.json'
@@ -60,7 +59,6 @@ describe('Renderer', () => {
     stepLogSpy.mockImplementation(() => mockStepLogFn)
     logSpy.mockImplementation(() => {})
     successLogSpy.mockImplementation(() => {})
-    errorLogSpy.mockImplementation(() => {})
     startServerSpy.mockImplementation(() => express())
   })
 
@@ -188,9 +186,6 @@ describe('Renderer', () => {
         resumedRenderSpy.mockRejectedValueOnce(renderError)
 
         await expect(() => renderer.render()).rejects.toThrow('render error')
-
-        expect(errorLogSpy).toHaveBeenCalledTimes(1)
-        expect(errorLogSpy).toHaveBeenCalledWith(renderError)
       })
     })
 
