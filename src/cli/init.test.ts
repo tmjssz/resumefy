@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import * as utils from '../render/utils'
 import * as writeFile from '../init'
 import { log } from './log'
@@ -28,8 +28,6 @@ describe('init', () => {
   const writeFileSpy = vi.spyOn(writeFile, 'init')
 
   const successLog = 'Created file test-resume.json 🚀'
-
-  beforeEach(() => {})
 
   afterEach(() => {
     vi.clearAllMocks()
