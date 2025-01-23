@@ -74,13 +74,13 @@ export class ResumePage {
    * @param page page to add menu to
    * @param openPreview callback to open preview
    */
-  async addMenu(page: Page, openPreview: () => void) {
+  async addMenu(openPreview: () => void) {
     try {
-      await page.exposeFunction('openPreview', openPreview)
+      await this.page.exposeFunction('openPreview', openPreview)
     } catch {
       // Function already exposed
     }
 
-    page.evaluate(menu(openPreview))
+    await this.page.evaluate(menu(openPreview))
   }
 }

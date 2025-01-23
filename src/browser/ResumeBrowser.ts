@@ -118,7 +118,7 @@ export class ResumeBrowser {
       }
     }
 
-    await resumePage.addMenu(resumePage.page, openFileInNewPage)
+    await resumePage.addMenu(openFileInNewPage)
   }
 
   /**
