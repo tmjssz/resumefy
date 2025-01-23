@@ -121,11 +121,6 @@ export class Renderer {
       }, Promise.resolve())
       .catch((err) => {
         this.#browser.error(err)
-
-        if (this.#cliOptions) {
-          log.error(err)
-        }
-
         throw err
       })
 
