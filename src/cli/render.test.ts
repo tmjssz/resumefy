@@ -45,8 +45,8 @@ describe('render', () => {
     throw new Error('process.exit called')
   })
 
-  let mockFileChange = async (_file: string | null) => {}
-  const fsWatchMock = (_filename: fs.PathLike, callback: fs.WatchListener<string> = () => {}) => {
+  let mockFileChange = async (_: string | null) => {}
+  const fsWatchMock = (_: fs.PathLike, callback: fs.WatchListener<string> = () => {}) => {
     mockFileChange = async (file: string | null) => callback('change', file)
     return {} as fs.FSWatcher
   }
