@@ -11,9 +11,7 @@ export const init = async (filename: string, options: InitCliOptions) => {
     try {
       await loadTheme(theme)
     } catch (err) {
-      if (err instanceof Error) {
-        log.warn(err.message)
-      }
+      log.warn(err instanceof Error ? err.message : err)
     }
   }
 
