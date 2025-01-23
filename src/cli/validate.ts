@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises'
-import { log } from './log.js'
-import { validateObject } from '../validate/validate.js'
+import { log } from './log'
+import { validateObject } from '../validate/validate'
 
 export const validate = async (filename: string) => {
   let resumeObject

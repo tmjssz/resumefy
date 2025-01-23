@@ -1,8 +1,10 @@
 import { strip } from 'ansicolor'
-import type { Browser, Page } from 'puppeteer'
+import type { Browser, LaunchOptions, Page } from 'puppeteer'
+import puppeteer from 'puppeteer'
 import ErrorHtmlRenderer from 'error-html'
-import { existsSync, promises as fs } from 'fs'
-import { ResumePage } from './ResumePage.js'
+import { existsSync } from 'fs'
+import { mkdir } from 'fs/promises'
+import { ResumePage } from './ResumePage'
 
 /**
  * Represents a browser to render resume
@@ -15,6 +17,11 @@ export class ResumeBrowser {
   constructor(browser: Browser) {
     this.#browser = browser
     this.#errorHtmlRenderer = new ErrorHtmlRenderer({ appPath: process.cwd() })
+  }
+
+  static async launch(options?: LaunchOptions) {
+    const puppeteerBrowser = await puppeteer.launch(options)
+    return new ResumeBrowser(puppeteerBrowser)
   }
 
   isHeadless() {
@@ -79,7 +86,7 @@ export class ResumeBrowser {
    */
   async writeFiles(dir: string, name: string) {
     if (!existsSync(dir)) {
-      await fs.mkdir(dir)
+      await mkdir(dir)
     }
 
     const page = await this.getPage(0)
@@ -107,12 +114,12 @@ export class ResumeBrowser {
       } else {
         // Otherwise open new preview page and navigate to file
         const previewPage = await this.#browser.newPage()
-        previewPage.goto(fileUrl)
+        await previewPage.goto(fileUrl)
         this.#previewPage = previewPage
       }
     }
 
-    await resumePage.addMenu(resumePage.page, openFileInNewPage)
+    await resumePage.addMenu(openFileInNewPage)
   }
 
   /**

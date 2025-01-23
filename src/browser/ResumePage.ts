@@ -1,9 +1,9 @@
 import { TimeoutError, type Page } from 'puppeteer'
-import { promises as fs } from 'fs'
+import { writeFile } from 'fs/promises'
 import path from 'path'
-import type { ResumeBrowser } from './ResumeBrowser.js'
-import { log } from '../cli/log.js'
-import { menu } from './menu.js'
+import type { ResumeBrowser } from './ResumeBrowser'
+import { log } from '../cli/log'
+import { menu } from './menu'
 
 /**
  * Represents a page in the browser
@@ -41,7 +41,7 @@ export class ResumePage {
    * @returns Promise resolving when file is written
    */
   async html(dir: string, name: string) {
-    return fs.writeFile(path.join(dir, `${name}.html`), await this.content())
+    return writeFile(path.join(dir, `${name}.html`), await this.content())
   }
 
   /**
@@ -74,13 +74,13 @@ export class ResumePage {
    * @param page page to add menu to
    * @param openPreview callback to open preview
    */
-  async addMenu(page: Page, openPreview: () => void) {
+  async addMenu(openPreview: () => void) {
     try {
-      await page.exposeFunction('openPreview', openPreview)
+      await this.page.exposeFunction('openPreview', openPreview)
     } catch {
       // Function already exposed
     }
 
-    page.evaluate(menu(openPreview))
+    await this.page.evaluate(menu(openPreview))
   }
 }

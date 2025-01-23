@@ -1,5 +1,5 @@
 import express from 'express'
-import { log } from '../cli/log.js'
+import { log } from '../cli/log'
 
 export const startServer = (path: string, port: number) => {
   const app = express()

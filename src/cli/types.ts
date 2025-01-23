@@ -1,4 +1,4 @@
-import { RenderOptions } from '../types.js'
+import { RenderOptions } from '../types'
 
 export type RenderCliOptions = {
   // Run browser in headless mode

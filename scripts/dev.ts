@@ -1,3 +1,3 @@
-import { cli } from '../src/cli/index.js'
+import { cli } from '../src/cli/index'
 
 cli.parse(process.argv)
