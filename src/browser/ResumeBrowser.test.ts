@@ -6,10 +6,12 @@ import { ResumeBrowser } from './ResumeBrowser'
 import { ResumePage } from './ResumePage'
 import * as fs from 'fs'
 import * as fsPromises from 'fs/promises'
+import * as ansicolor from 'ansicolor'
 
 vi.mock('fs')
 vi.mock('fs/promises')
 vi.mock('puppeteer')
+vi.mock('ansicolor')
 vi.mock('./ResumePage')
 
 describe('ResumeBrowser', () => {
@@ -35,6 +37,7 @@ describe('ResumeBrowser', () => {
   const htmlSpy = vi.spyOn(ResumePage.prototype, 'html')
   const pdfSpy = vi.spyOn(ResumePage.prototype, 'pdf')
   const addMenuSpy = vi.spyOn(ResumePage.prototype, 'addMenu')
+  const stripSpy = vi.spyOn(ansicolor, 'strip')
 
   const gotoMock = vi.fn()
   const isClosedMock = vi.fn()
@@ -71,6 +74,7 @@ describe('ResumeBrowser', () => {
       simulateOpenPreviewClick = fn
       return Promise.resolve()
     })
+    stripSpy.mockImplementation((text: string) => text)
     gotoMock.mockResolvedValue(null)
     isClosedMock.mockReturnValue(false)
     bringToFrontMock.mockResolvedValue(null)
@@ -134,15 +138,40 @@ describe('ResumeBrowser', () => {
   })
 
   describe('error', () => {
-    it('should render an error to the first page of the browser if not in headless mode', async () => {
-      browser.process = vi.fn().mockReturnValue({ spawnargs: [] })
-      const error = new Error('Test error')
+    describe('if running in headless mode', () => {
+      beforeEach(() => {
+        browser.process = vi.fn().mockReturnValue({ spawnargs: [] })
+      })
 
-      const page = await resumeBrowser.error(error)
+      it('should render an error to the first page of the browser', async () => {
+        const error = new Error('Test error')
 
-      expect(page).toBeInstanceOf(ResumePage)
-      expect(setContentSpy).toHaveBeenCalledWith('<html>Error</html>')
-      expect(errorHtmlRenderSpy).toHaveBeenCalledWith(error)
+        const page = await resumeBrowser.error(error)
+
+        expect(page).toBeInstanceOf(ResumePage)
+        expect(setContentSpy).toHaveBeenCalledWith('<html>Error</html>')
+
+        expect(stripSpy).toHaveBeenCalledTimes(2)
+        expect(stripSpy).toHaveBeenNthCalledWith(1, error.message)
+        expect(stripSpy).toHaveBeenNthCalledWith(2, error.stack)
+
+        expect(errorHtmlRenderSpy).toHaveBeenCalledWith(error)
+      })
+
+      it("should wrap thrown object if it's not instance of Error", async () => {
+        const error = new Error('An error occurred while rendering the resume: Test error')
+
+        const page = await resumeBrowser.error('Test error')
+
+        expect(page).toBeInstanceOf(ResumePage)
+        expect(setContentSpy).toHaveBeenCalledWith('<html>Error</html>')
+
+        expect(stripSpy).toHaveBeenCalledTimes(2)
+        expect(stripSpy).toHaveBeenNthCalledWith(1, error.message)
+        expect(stripSpy).toHaveBeenNthCalledWith(2, expect.stringContaining(error.message))
+
+        expect(errorHtmlRenderSpy).toHaveBeenCalledWith(error)
+      })
     })
 
     it('should NOT render an error if in headless mode', async () => {
