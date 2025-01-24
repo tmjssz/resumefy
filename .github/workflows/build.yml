@@ -1,4 +1,4 @@
-name: Test
+name: Build
 
 on:
   # Trigger the workflow on push or pull request,
@@ -11,8 +11,8 @@ on:
       - main
 
 jobs:
-  test:
-    name: Unit tests
+  build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
@@ -27,17 +27,10 @@ jobs:
           node-version-file: .node-version
           cache: npm
 
-      # ESLint and Prettier must be in `package.json`
       - name: Install dependencies
         id: install
         run: npm ci
 
-      - name: Run unit tests
-        id: lint
-        run: npm run test:ci
-
-      - name: Update Coverage Badge
-        # GitHub actions: default branch variable
-        # https://stackoverflow.com/questions/64781462/github-actions-default-branch-variable
-        # if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
-        uses: we-cli/coverage-badge-action@main
+      - name: Build package
+        id: build
+        run: npm run build

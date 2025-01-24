@@ -1,5 +1,11 @@
 # Resumefy
 
+[![NPM Version](https://img.shields.io/npm/v/resumefy)](https://www.npmjs.com/package/resumefy)
+[![build status](https://github.com/tmjssz/resumefy/actions/workflows/build.yml/badge.svg)](https://github.com/tmjssz/resumefy/actions/workflows/build.yml)
+[![coverage](https://tmjssz.github.io/resumefy/badges/coverage.svg)](https://github.com/tmjssz/resumefy/actions/workflows/test.yml)
+![dependency status](https://img.shields.io/librariesio/github/tmjssz/resumefy)
+![Node Current](https://img.shields.io/node/v/resumefy)
+
 > A simple toolkit to bring your [JSON Resume](https://jsonresume.org/) to life
 
 Resumefy renders a JSON resume to HTML and PDF with [Puppeteer](https://github.com/puppeteer/puppeteer). It uses [Resumed](https://github.com/rbardini/resumed) under the hood to render the resume and provides both a CLI and a direct Typescript API.
