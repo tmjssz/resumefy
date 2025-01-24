@@ -25,12 +25,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
-          cache: npm
+          cache: yarn
 
       - name: Install dependencies
         id: install
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       - name: Build package
         id: build
-        run: npm run build
+        run: yarn build
