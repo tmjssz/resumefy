@@ -10,7 +10,7 @@ describe('menu', () => {
       style: {},
     })),
     body: { appendChild: vi.fn() },
-  } as any
+  } as unknown as Document
 
   const openPreview = vi.fn()
 
