@@ -25,6 +25,7 @@ describe('render', () => {
     headless: true,
     theme: 'jsonresume-theme-even',
     outDir: './output',
+    port: 3333,
   }
 
   const puppeteerOptions = {
@@ -79,7 +80,7 @@ describe('render', () => {
 
     expect(Renderer.prototype.render).toHaveBeenCalledTimes(1)
     expect(Renderer.prototype.addMenu).toHaveBeenCalledTimes(1)
-    expect(Renderer.prototype.addMenu).toHaveBeenCalledWith(`http://localhost:8080`)
+    expect(Renderer.prototype.addMenu).toHaveBeenCalledWith(`http://localhost:${options.port}`)
     expect(Renderer.prototype.startFileServer).not.toHaveBeenCalled()
   })
 
@@ -99,6 +100,36 @@ describe('render', () => {
     expect(Renderer.prototype.startFileServer).not.toHaveBeenCalled()
   })
 
+  describe('default options', () => {
+    it('should use default outDir `.` if not passed', async () => {
+      await render(resumeFile, { theme: options.theme })
+
+      expect(Renderer.launch).toHaveBeenCalledWith(
+        resumeFile,
+        { theme: options.theme, outDir: '.' },
+        puppeteerOptions,
+        { watch: false, headless: true },
+      )
+    })
+
+    it('should use default port 8080 if not passed', async () => {
+      await render(resumeFile, { theme: options.theme })
+
+      expect(addMenuSpy).toHaveBeenCalledWith('http://localhost:8080')
+    })
+
+    it('should use inverted watch flag for headless by default', async () => {
+      await render(resumeFile, { theme: options.theme, watch: true })
+
+      expect(Renderer.launch).toHaveBeenCalledWith(
+        resumeFile,
+        { theme: options.theme, outDir: '.' },
+        { ...puppeteerOptions, headless: false },
+        { watch: true, headless: false },
+      )
+    })
+  })
+
   describe('watch mode', () => {
     const watchOptions = { ...options, watch: true, headless: false }
 
@@ -107,7 +138,7 @@ describe('render', () => {
 
       expect(log.dim).toHaveBeenCalledWith('\nWatching test-resume.json for changes...')
       expect(Renderer.prototype.startFileServer).toHaveBeenCalledTimes(1)
-      expect(Renderer.prototype.startFileServer).toHaveBeenCalledWith(8080)
+      expect(Renderer.prototype.startFileServer).toHaveBeenCalledWith(options.port)
       expect(fs.watch).toHaveBeenCalledWith(resumeFile, expect.any(Function))
     })
 
@@ -132,7 +163,7 @@ describe('render', () => {
       expect(Renderer.prototype.render).toHaveBeenCalledTimes(1)
       expect(Renderer.prototype.addMenu).not.toHaveBeenCalled()
       expect(Renderer.prototype.startFileServer).toHaveBeenCalledTimes(1)
-      expect(Renderer.prototype.startFileServer).toHaveBeenCalledWith(8080)
+      expect(Renderer.prototype.startFileServer).toHaveBeenCalledWith(options.port)
     })
 
     it('should reload preview and add menu if resume file changes', async () => {
