@@ -1,6 +1,6 @@
 # Resumefy
 
-![build status](https://github.com/tmjssz/resumefy/actions/workflows/build.yml/badge.svg)
+[![build status](https://github.com/tmjssz/resumefy/actions/workflows/build.yml/badge.svg)](https://github.com/tmjssz/resumefy/actions/workflows/build.yml)
 ![NPM Version](https://img.shields.io/npm/v/resumefy)
 [![coverage](https://tmjssz.github.io/resumefy/badges/coverage.svg)](https://github.com/tmjssz/resumefy/actions/workflows/test.yml)
 ![dependency status](https://img.shields.io/librariesio/github/tmjssz/resumefy)
