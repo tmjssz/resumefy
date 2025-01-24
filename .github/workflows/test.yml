@@ -34,7 +34,7 @@ jobs:
 
       - name: Run unit tests
         id: lint
-        run: npm run test:coverage
+        run: npm run test:ci
 
       - name: Update Coverage Badge
         # GitHub actions: default branch variable
