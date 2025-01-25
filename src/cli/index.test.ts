@@ -24,7 +24,7 @@ describe('CLI', () => {
   })
 
   describe('render', () => {
-    const defaultOptions = { outDir: '.' }
+    const defaultOptions = { outDir: '.', port: '8080' }
     const renderCommand = cli.commands[0]
 
     it('should call render as default command', () => {
@@ -42,7 +42,7 @@ describe('CLI', () => {
     it.each(['-d', '--outDir'])('should call render with passed outDir option using `%s`', (outDirOption) => {
       cli.parse(['node', 'resumefy', 'render', 'myresume.json', outDirOption, 'output'])
       expect(renderSpy).toHaveBeenCalledTimes(1)
-      expect(renderSpy).toHaveBeenCalledWith('myresume.json', { outDir: 'output' }, renderCommand)
+      expect(renderSpy).toHaveBeenCalledWith('myresume.json', { ...defaultOptions, outDir: 'output' }, renderCommand)
     })
 
     it.each(['-t', '--theme'])('should call render with passed theme option using `%s`', (themeOption) => {
@@ -53,6 +53,12 @@ describe('CLI', () => {
         { ...defaultOptions, theme: 'jsonresume-theme-even' },
         renderCommand,
       )
+    })
+
+    it.each(['-p', '--port'])('should call render with passed port option using `%s`', (portOption) => {
+      cli.parse(['node', 'resumefy', 'render', 'myresume.json', portOption, '3333'])
+      expect(renderSpy).toHaveBeenCalledTimes(1)
+      expect(renderSpy).toHaveBeenCalledWith('myresume.json', { ...defaultOptions, port: '3333' }, renderCommand)
     })
 
     it.each(['-w', '--watch'])('should call render with passed watch option using `%s`', (watchOption) => {

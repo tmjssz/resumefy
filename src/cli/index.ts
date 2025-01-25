@@ -11,6 +11,7 @@ cli
   .argument('[resume.json]', 'path to resume JSON file', 'resume.json')
   .option('-d, --outDir <outDir>', 'directory to save output files', '.')
   .option('-t, --theme <theme>', 'theme to use for rendering (overrides theme specified in resume.json)')
+  .option('-p, --port <port>', 'port to run the file server on', '8080')
   .option('-w, --watch', 'watch resume.json file for changes')
   .option('--headless', 'run browser in headless mode')
   .action(render)
