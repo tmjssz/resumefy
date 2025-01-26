@@ -66,6 +66,7 @@ jobs:
           path: coverage
 
   report-coverage:
+    name: Report coverage
     needs: test
     runs-on: ubuntu-latest
 
