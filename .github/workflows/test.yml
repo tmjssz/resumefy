@@ -22,10 +22,6 @@ jobs:
           - branch: ${{ github.head_ref }}
             artifact: pull-request
 
-    permissions:
-      # Required to checkout the code
-      contents: read
-
     steps:
       - name: Checkout
         id: checkout
