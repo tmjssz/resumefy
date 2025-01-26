@@ -70,18 +70,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: "Download Coverage Artifacts"
+      - name: "Download Coverage Artifacts for Pull Request"
+        id: download-coverage-pull-request
         uses: actions/download-artifact@v4
         with:
           name: coverage-pull-request
           path: coverage
 
-      - uses: actions/download-artifact@v4
+      - name: "Download Coverage Artifacts for Main"
+        id: download-coverage-main
+        uses: actions/download-artifact@v4
         with:
           name: coverage-main
           path: coverage-main
 
       - name: "Report Coverage"
+        id: report-coverage
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           json-summary-compare-path: coverage-main/coverage-summary.json
