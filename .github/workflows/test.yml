@@ -14,11 +14,26 @@ jobs:
   test:
     name: Unit tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - branch: main
+            artifact: main
+          - branch: ${{ github.head_ref }}
+            artifact: pull-request
+
+    permissions:
+      # Required to checkout the code
+      contents: read
 
     steps:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
+          ## Set repository to correctly checkout from forks
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Setup Node.js
         id: setup-node
@@ -30,14 +45,62 @@ jobs:
       # ESLint and Prettier must be in `package.json`
       - name: Install dependencies
         id: install
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable --immutable-cache --check-cache
 
       - name: Run unit tests
         id: lint
         run: yarn test:ci
 
       - name: Update Coverage Badge
+        id: coverage-badge
         # GitHub actions: default branch variable
         # https://stackoverflow.com/questions/64781462/github-actions-default-branch-variable
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
         uses: we-cli/coverage-badge-action@main
+      
+      - name: Upload Coverage
+        id: upload-coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.artifact }}
+          path: coverage
+
+  report-coverage:
+    name: Report coverage
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Download Coverage Artifacts for Pull Request"
+        id: download-coverage-pull-request
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-pull-request
+          path: coverage
+
+      - name: "Download Coverage Artifacts for Main"
+        id: download-coverage-main
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-main
+          path: coverage-main
+
+      - name: "Report Coverage"
+        id: report-coverage
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          json-summary-compare-path: coverage-main/coverage-summary.json
+
+  results:
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    name: Final test results
+    needs: [test, report-coverage]
+    steps:
+      - run: |
+          result="${{ needs.test.result }}"
+          if [[ $result == "success" || $result == "skipped" ]]; then
+            exit 0
+          else
+            exit 1
+          fi
