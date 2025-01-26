@@ -30,7 +30,7 @@
     "dev": "tsx watch ./scripts/dev.ts ./node_modules/@jsonresume/schema/sample.resume.json --theme @tmjssz/jsonresume-theme-even --watch",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:ci": "vitest run --coverage --coverage.reporter=json-summary --coverage.reporter=text",
+    "test:ci": "vitest run --coverage --coverage.reporter=json-summary --coverage.reporter=text --coverage.reporter=json",
     "test:watch": "vitest watch"
   },
   "bin": "bin/resumefy.js",
