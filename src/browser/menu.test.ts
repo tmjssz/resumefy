@@ -23,7 +23,7 @@ describe('menu', () => {
   it('should create a container and button, and append them to the document body', () => {
     addMenu()
 
-    expect(document.createElement).toHaveBeenCalledTimes(2)
+    expect(document.createElement).toHaveBeenCalledTimes(3)
     expect(document.createElement).toHaveBeenCalledWith('div')
     expect(document.createElement).toHaveBeenCalledWith('button')
     expect(document.body.appendChild).toHaveBeenCalledTimes(1)
