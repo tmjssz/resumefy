@@ -42,14 +42,10 @@ jobs:
           node-version-file: .node-version
           cache: yarn
 
-      - name: Get Yarn Cache Folder
-        id: yarn-cache-folder
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-  
       # ESLint and Prettier must be in `package.json`
       - name: Install dependencies
         id: install
-        run: yarn install --immutable --immutable-cache
+        run: yarn install --immutable
 
       - name: Run unit tests
         id: lint
