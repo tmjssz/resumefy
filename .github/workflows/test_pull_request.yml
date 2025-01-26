@@ -1,0 +1,87 @@
+name: Test
+
+on: pull_request
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - branch: main
+            artifact: main
+          - branch: ${{ github.head_ref }}
+            artifact: pull-request
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
+          ## Set repository to correctly checkout from forks
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Setup Node.js
+        id: setup-node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: yarn
+
+      # ESLint and Prettier must be in `package.json`
+      - name: Install dependencies
+        id: install
+        run: yarn install --immutable --check-cache
+
+      - name: Run unit tests
+        id: lint
+        run: yarn test:ci
+      
+      - name: Upload Coverage
+        id: upload-coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.artifact }}
+          path: coverage
+
+  report-coverage:
+    name: Report coverage
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Download Coverage Artifacts for Pull Request"
+        id: download-coverage-pull-request
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-pull-request
+          path: coverage
+
+      - name: "Download Coverage Artifacts for Main"
+        id: download-coverage-main
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-main
+          path: coverage-main
+
+      - name: "Report Coverage"
+        id: report-coverage
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          json-summary-compare-path: coverage-main/coverage-summary.json
+
+  results:
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    name: Final test results
+    needs: [test, report-coverage]
+    steps:
+      - run: |
+          result="${{ needs.test.result }}"
+          if [[ $result == "success" || $result == "skipped" ]]; then
+            exit 0
+          else
+            exit 1
+          fi
