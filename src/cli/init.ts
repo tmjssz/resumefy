@@ -4,7 +4,7 @@ import { init as writeFile } from '../init'
 import { log } from './log'
 import { InitCliOptions } from './types'
 
-export const init = async (filename: string, options: InitCliOptions, test) => {
+export const init = async (filename: string, options: InitCliOptions) => {
   const { theme } = options
 
   if (theme) {
