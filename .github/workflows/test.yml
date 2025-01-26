@@ -45,7 +45,7 @@ jobs:
       # ESLint and Prettier must be in `package.json`
       - name: Install dependencies
         id: install
-        run: yarn install --immutable --immutable-cache --check-cache
+        run: yarn install --immutable --immutable-cache
 
       - name: Run unit tests
         id: lint
