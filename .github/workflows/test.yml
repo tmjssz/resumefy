@@ -94,7 +94,7 @@ jobs:
   results:
     if: ${{ always() }}
     runs-on: ubuntu-latest
-    name: Final Results
+    name: Final test results
     needs: [test, report-coverage]
     steps:
       - run: |
