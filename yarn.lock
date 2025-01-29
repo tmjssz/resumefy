@@ -3918,15 +3918,16 @@ __metadata:
   linkType: hard
 
 "resumed@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "resumed@npm:4.0.0"
+  version: 4.1.0
+  resolution: "resumed@npm:4.1.0"
   dependencies:
     "@jsonresume/schema": "npm:^1.0.0"
     sade: "npm:^1.7.0"
+    strip-json-comments: "npm:^5.0.1"
     yoctocolors: "npm:^2.0.0"
   bin:
     resumed: bin/resumed.js
-  checksum: 10c0/58b585df53a1909e0fde113bfe7a6e761790e872daa893457fc563c2c80d8206488aa0b5392757f28a6341bb586b949d90230e7ec5deb5e6aa340bb604751b62
+  checksum: 10c0/862a4c62d8543701498e2dae4f4fed7ee981af043344577e9660939a1e6542b06140d0d1b82b28f7aee003c083d37a4d20aacf5a36306c162570969c47b5d42f
   languageName: node
   linkType: hard
 
@@ -4385,6 +4386,13 @@ __metadata:
   version: 3.1.1
   resolution: "strip-json-comments@npm:3.1.1"
   checksum: 10c0/9681a6257b925a7fa0f285851c0e613cc934a50661fa7bb41ca9cbbff89686bb4a0ee366e6ecedc4daafd01e83eee0720111ab294366fe7c185e935475ebcecd
+  languageName: node
+  linkType: hard
+
+"strip-json-comments@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "strip-json-comments@npm:5.0.1"
+  checksum: 10c0/c9d9d55a0167c57aa688df3aa20628cf6f46f0344038f189eaa9d159978e80b2bfa6da541a40d83f7bde8a3554596259bf6b70578b2172356536a0e3fa5a0982
   languageName: node
   linkType: hard
 
