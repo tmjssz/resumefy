@@ -3,7 +3,7 @@ import { render } from './render'
 import { init } from './init'
 import { validate } from './validate'
 
-export const cli = program.version('1.4.0').description('A simple toolkit to bring your JSON Resume to life')
+export const cli = program.version('1.5.0').description('A simple toolkit to bring your JSON Resume to life')
 
 cli
   .command('render', { isDefault: true })
