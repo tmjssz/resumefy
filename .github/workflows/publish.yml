@@ -4,9 +4,7 @@ on:
   # Trigger the workflow when a new release is created
   release:
     types: [created]
-  pull_request:
-      branches:
-        - main
+
 jobs:
   publish:
     name: Publish
