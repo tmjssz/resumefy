@@ -29,6 +29,7 @@ jobs:
         with:
           node-version-file: .node-version
           cache: yarn
+          registry-url: 'https://registry.npmjs.org'
 
       # ESLint and Prettier must be in `package.json`
       - name: Install dependencies
