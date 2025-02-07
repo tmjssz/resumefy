@@ -3,8 +3,9 @@
 [![NPM Version](https://img.shields.io/npm/v/resumefy)](https://www.npmjs.com/package/resumefy)
 [![build status](https://github.com/tmjssz/resumefy/actions/workflows/build.yml/badge.svg)](https://github.com/tmjssz/resumefy/actions/workflows/build.yml?query=branch%3Amain)
 [![coverage](https://tmjssz.github.io/resumefy/badges/coverage.svg)](https://github.com/tmjssz/resumefy/actions/workflows/test.yml?query=branch%3Amain)
-![dependency status](https://img.shields.io/librariesio/github/tmjssz/resumefy)
 ![Node Current](https://img.shields.io/node/v/resumefy)
+![dependency status](https://img.shields.io/librariesio/github/tmjssz/resumefy)
+[![Dependabot](https://badgen.net/badge/Dependabot/enabled/green?icon=dependabot)](https://dependabot.com/)
 
 > A simple toolkit to bring your [JSON Resume](https://jsonresume.org/) to life
 
