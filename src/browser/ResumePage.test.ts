@@ -1,12 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { TimeoutError, type Page } from 'puppeteer'
-import fsPromises from 'fs/promises'
+import { writeFile } from 'fs/promises'
 import { ResumePage } from './ResumePage'
 import { log } from '../cli/log'
 import { ResumeBrowser } from './ResumeBrowser'
 import * as menu from './menu'
 
-vi.mock('fs/promises')
+vi.mock('fs/promises', () => ({
+  writeFile: vi.fn(),
+}))
 
 vi.mock('../cli/log', () => ({
   log: {
@@ -26,7 +28,6 @@ describe('ResumePage', () => {
 
   const htmlMock = '<html></html>'
 
-  const writeFileSpy = vi.spyOn(fsPromises, 'writeFile')
   const menuSpy = vi.spyOn(menu, 'menu')
 
   let resumePage: ResumePage
@@ -39,7 +40,7 @@ describe('ResumePage', () => {
     page.exposeFunction.mockResolvedValue(undefined)
     page.evaluate.mockResolvedValue(undefined)
 
-    writeFileSpy.mockImplementation(() => Promise.resolve())
+    vi.mocked(writeFile).mockImplementation(() => Promise.resolve())
     page.pdf.mockResolvedValue(undefined)
     menuSpy.mockImplementation((fn) => () => {
       fn()
@@ -73,7 +74,7 @@ describe('ResumePage', () => {
       const dir = './test/dir'
       const name = 'test-file'
       await resumePage.html(dir, name)
-      expect(writeFileSpy).toHaveBeenCalledWith('test/dir/test-file.html', htmlMock)
+      expect(writeFile).toHaveBeenCalledWith('test/dir/test-file.html', htmlMock)
     })
   })
 

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { Renderer } from '../render/Renderer'
 import { log } from './log'
 import { render } from './render'
-import * as fs from 'fs'
+import fs from 'fs'
 import { ResumeBrowser } from '../browser'
 
 vi.mock('ansicolor', () => ({
@@ -16,7 +16,12 @@ vi.mock('./log', () => ({
   },
 }))
 
-vi.mock('fs')
+vi.mock('fs', () => ({
+  watch: vi.fn(),
+  default: {
+    watch: vi.fn(),
+  },
+}))
 
 describe('render', () => {
   const resumeFile = 'test-resume.json'
@@ -36,7 +41,6 @@ describe('render', () => {
     args: ['--no-sandbox'],
   }
 
-  const watchSpy = vi.spyOn(fs, 'watch')
   const launchSpy = vi.spyOn(Renderer, 'launch')
   const renderSpy = vi.spyOn(Renderer.prototype, 'render')
   const addMenuSpy = vi.spyOn(Renderer.prototype, 'addMenu')
@@ -48,12 +52,16 @@ describe('render', () => {
 
   let mockFileChange = async (_: string | null) => {}
   const fsWatchMock = (_: fs.PathLike, callback: fs.WatchListener<string> = () => {}) => {
-    mockFileChange = async (file: string | null) => callback('change', file)
+    mockFileChange = async (file: string | null) => {
+      await callback('change', file)
+      // Wait for render to complete
+      await new Promise(process.nextTick)
+    }
     return {} as fs.FSWatcher
   }
 
   beforeEach(() => {
-    watchSpy.mockImplementation(fsWatchMock)
+    vi.mocked(fs.watch).mockImplementation(fsWatchMock)
     launchSpy.mockImplementation(() => Promise.resolve(new Renderer(resumeFile, options, {} as ResumeBrowser)))
     renderSpy.mockImplementation(() => Promise.resolve())
     addMenuSpy.mockImplementation(() => Promise.resolve())

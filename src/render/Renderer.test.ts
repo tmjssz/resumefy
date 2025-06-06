@@ -1,7 +1,7 @@
 import sampleResume from '@jsonresume/schema/sample.resume.json' with { type: 'json' }
 import express from 'express'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import fsPromises from 'fs/promises'
+import { readFile } from 'fs/promises'
 import { Renderer } from './Renderer'
 import * as resumed from 'resumed'
 import * as validateObject from '../validate/validate'
@@ -11,8 +11,11 @@ import { log } from '../cli/log'
 import * as startServer from '../browser/server'
 import { ResumeBrowser } from '../browser'
 
-vi.mock('fs/promises')
 vi.mock('resumed')
+
+vi.mock('fs/promises', () => ({
+  readFile: vi.fn(),
+}))
 
 vi.mock('../browser', () => ({
   ResumeBrowser: {
@@ -23,7 +26,6 @@ vi.mock('../browser', () => ({
 describe('Renderer', () => {
   const getFilenameSpy = vi.spyOn(utils, 'getFilename')
   const loadThemeSpy = vi.spyOn(utils, 'loadTheme')
-  const readFileSpy = vi.spyOn(fsPromises, 'readFile')
   const resumedRenderSpy = vi.spyOn(resumed, 'render')
   const validateObjectSpy = vi.spyOn(validateObject, 'validateObject')
   const stepLogSpy = vi.spyOn(log, 'step')
@@ -53,7 +55,7 @@ describe('Renderer', () => {
   beforeEach(() => {
     getFilenameSpy.mockReturnValue(fileName)
     loadThemeSpy.mockResolvedValue(mockThemeModule)
-    readFileSpy.mockResolvedValue(JSON.stringify(sampleResume))
+    vi.mocked(readFile).mockResolvedValue(JSON.stringify(sampleResume))
     validateObjectSpy.mockReturnValue(true)
     resumedRenderSpy.mockResolvedValue(mockRenderResult)
     stepLogSpy.mockImplementation(() => mockStepLogFn)
@@ -95,8 +97,8 @@ describe('Renderer', () => {
 
       await renderer.render()
 
-      expect(readFileSpy).toHaveBeenCalledTimes(1)
-      expect(readFileSpy).toHaveBeenCalledWith(resumeFile, 'utf-8')
+      expect(readFile).toHaveBeenCalledTimes(1)
+      expect(readFile).toHaveBeenCalledWith(resumeFile, 'utf-8')
 
       expect(validateObjectSpy).toHaveBeenCalledTimes(1)
       expect(validateObjectSpy).toHaveBeenCalledWith(sampleResume)
@@ -195,11 +197,11 @@ describe('Renderer', () => {
 
         const readFileError = new Error('read file error')
 
-        readFileSpy.mockRejectedValueOnce(readFileError)
+        vi.mocked(readFile).mockRejectedValueOnce(readFileError)
 
         await expect(() => renderer.render()).rejects.toThrow('read file error')
 
-        expect(readFileSpy).toHaveBeenCalledTimes(1)
+        expect(readFile).toHaveBeenCalledTimes(1)
         expect(mockResumeBrowser.error).toHaveBeenCalledTimes(1)
         expect(mockResumeBrowser.error).toHaveBeenCalledWith(readFileError)
       })

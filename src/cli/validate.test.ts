@@ -1,10 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import fsPromises from 'fs/promises'
+import { readFile } from 'fs/promises'
 import { log } from './log'
 import * as validateObject from '../validate/validate'
 import { validate } from './validate'
 
-vi.mock('fs/promises')
+vi.mock('fs/promises', () => ({
+  readFile: vi.fn(),
+}))
 
 vi.mock('./log', () => ({
   log: {
@@ -17,11 +19,10 @@ describe('validate', () => {
   const filename = 'test-resume.json'
   const mockResumeObject = { basics: { name: 'John Doe' } }
 
-  const readFileSpy = vi.spyOn(fsPromises, 'readFile')
   const validateObjectSpy = vi.spyOn(validateObject, 'validateObject')
 
   beforeEach(() => {
-    readFileSpy.mockResolvedValue(JSON.stringify(mockResumeObject))
+    vi.mocked(readFile).mockResolvedValue(JSON.stringify(mockResumeObject))
     validateObjectSpy.mockReturnValue(true)
   })
 
@@ -31,12 +32,12 @@ describe('validate', () => {
 
   it('should log an error if reading the file fails', async () => {
     const error = new Error('File read error')
-    readFileSpy.mockRejectedValueOnce(error)
+    vi.mocked(readFile).mockRejectedValueOnce(error)
 
     await validate(filename)
 
-    expect(readFileSpy).toHaveBeenCalledTimes(1)
-    expect(readFileSpy).toHaveBeenCalledWith(filename, 'utf-8')
+    expect(readFile).toHaveBeenCalledTimes(1)
+    expect(readFile).toHaveBeenCalledWith(filename, 'utf-8')
 
     expect(validateObjectSpy).not.toHaveBeenCalled()
 
@@ -51,8 +52,8 @@ describe('validate', () => {
 
     await validate(filename)
 
-    expect(readFileSpy).toHaveBeenCalledTimes(1)
-    expect(readFileSpy).toHaveBeenCalledWith(filename, 'utf-8')
+    expect(readFile).toHaveBeenCalledTimes(1)
+    expect(readFile).toHaveBeenCalledWith(filename, 'utf-8')
 
     expect(validateObjectSpy).toHaveBeenCalledTimes(1)
     expect(validateObjectSpy).toHaveBeenCalledWith(mockResumeObject)
@@ -67,8 +68,8 @@ describe('validate', () => {
 
     await validate(filename)
 
-    expect(readFileSpy).toHaveBeenCalledTimes(1)
-    expect(readFileSpy).toHaveBeenCalledWith(filename, 'utf-8')
+    expect(readFile).toHaveBeenCalledTimes(1)
+    expect(readFile).toHaveBeenCalledWith(filename, 'utf-8')
 
     expect(validateObjectSpy).toHaveBeenCalledTimes(1)
     expect(validateObjectSpy).toHaveBeenCalledWith(mockResumeObject)
