@@ -1,16 +1,24 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import * as puppeteer from 'puppeteer'
+import { launch } from 'puppeteer'
 import ErrorHtmlRenderer from 'error-html'
 import { Browser } from 'puppeteer'
 import { ResumeBrowser } from './ResumeBrowser'
 import { ResumePage } from './ResumePage'
 import * as fs from 'fs'
-import * as fsPromises from 'fs/promises'
+import { mkdir } from 'fs/promises'
 import * as ansicolor from 'ansicolor'
 
 vi.mock('fs')
-vi.mock('fs/promises')
-vi.mock('puppeteer')
+vi.mock('fs/promises', () => ({
+  mkdir: vi.fn(),
+}))
+vi.mock('puppeteer', () => {
+  const launch = vi.fn()
+  return {
+    launch,
+    default: { launch }
+  }
+})
 vi.mock('ansicolor')
 vi.mock('./ResumePage')
 
@@ -29,11 +37,9 @@ describe('ResumeBrowser', () => {
 
   let resumeBrowser: ResumeBrowser
 
-  const launchSpy = vi.spyOn(puppeteer, 'launch')
   const errorHtmlRenderSpy = vi.spyOn(ErrorHtmlRenderer.prototype, 'render')
   const setContentSpy = vi.spyOn(ResumePage.prototype, 'setContent')
   const existsSyncSpy = vi.spyOn(fs, 'existsSync')
-  const mkdirSpy = vi.spyOn(fsPromises, 'mkdir')
   const htmlSpy = vi.spyOn(ResumePage.prototype, 'html')
   const pdfSpy = vi.spyOn(ResumePage.prototype, 'pdf')
   const addMenuSpy = vi.spyOn(ResumePage.prototype, 'addMenu')
@@ -63,11 +69,11 @@ describe('ResumeBrowser', () => {
 
     resumeBrowser = new ResumeBrowser(browser as unknown as Browser)
 
-    launchSpy.mockResolvedValue(browser as unknown as Browser)
+    vi.mocked(launch).mockResolvedValue(browser as unknown as Browser)
     errorHtmlRenderSpy.mockReturnValue('<html>Error</html>')
     setContentSpy.mockResolvedValue(undefined)
     existsSyncSpy.mockReturnValue(false)
-    mkdirSpy.mockResolvedValue(undefined)
+    vi.mocked(mkdir).mockResolvedValue(undefined)
     htmlSpy.mockResolvedValue(undefined)
     pdfSpy.mockResolvedValue(undefined)
     addMenuSpy.mockImplementation((fn: () => void) => {
@@ -91,7 +97,7 @@ describe('ResumeBrowser', () => {
 
       const result = await ResumeBrowser.launch(options)
 
-      expect(puppeteer.launch).toHaveBeenCalledWith(options)
+      expect(launch).toHaveBeenCalledWith(options)
       expect(result).toBeInstanceOf(ResumeBrowser)
     })
   })
@@ -202,8 +208,8 @@ describe('ResumeBrowser', () => {
       expect(existsSyncSpy).toHaveBeenCalledTimes(1)
       expect(existsSyncSpy).toHaveBeenCalledWith(dir)
 
-      expect(mkdirSpy).toHaveBeenCalledTimes(1)
-      expect(mkdirSpy).toHaveBeenCalledWith(dir)
+      expect(mkdir).toHaveBeenCalledTimes(1)
+      expect(mkdir).toHaveBeenCalledWith(dir)
     })
 
     it('should NOT create the provided directory if it does exists', async () => {
@@ -212,7 +218,7 @@ describe('ResumeBrowser', () => {
 
       expect(existsSyncSpy).toHaveBeenCalledTimes(1)
       expect(existsSyncSpy).toHaveBeenCalledWith(dir)
-      expect(mkdirSpy).not.toHaveBeenCalled()
+      expect(mkdir).not.toHaveBeenCalled()
     })
 
     it('should write HTML and PDF files to the provided directory', async () => {

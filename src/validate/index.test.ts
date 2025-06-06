@@ -1,11 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import fsPromises from 'fs/promises'
+import { readFile } from 'fs/promises'
 import { ValidationError as ValidationErrorJsonSchema } from 'jsonschema'
 import * as validateObject from './validate'
 import { validate } from './index'
 import { ValidationError } from './error'
 
-vi.mock('fs/promises')
+vi.mock('fs/promises', () => ({
+  readFile: vi.fn(),
+}))
 
 describe('validate', () => {
   const resume = {
@@ -14,11 +16,10 @@ describe('validate', () => {
     summary: 'A summary',
   }
 
-  const readFileSpy = vi.spyOn(fsPromises, 'readFile')
   const validateObjectSpy = vi.spyOn(validateObject, 'validateObject')
 
   beforeEach(() => {
-    readFileSpy.mockResolvedValue(JSON.stringify(resume))
+    vi.mocked(readFile).mockResolvedValue(JSON.stringify(resume))
     validateObjectSpy.mockReturnValue(true)
   })
 
@@ -30,8 +31,8 @@ describe('validate', () => {
     const result = await validate('resume.json')
     expect(result).toBeTruthy()
 
-    expect(readFileSpy).toHaveBeenCalledTimes(1)
-    expect(readFileSpy).toHaveBeenCalledWith('resume.json', 'utf-8')
+    expect(readFile).toHaveBeenCalledTimes(1)
+    expect(readFile).toHaveBeenCalledWith('resume.json', 'utf-8')
     expect(validateObjectSpy).toHaveBeenCalledTimes(1)
     expect(validateObjectSpy).toHaveBeenCalledWith(resume)
   })
@@ -46,13 +47,13 @@ describe('validate', () => {
   })
 
   it('should throw an error if reading the file fails', async () => {
-    readFileSpy.mockRejectedValueOnce(new Error('Failed to read file'))
+    vi.mocked(readFile).mockRejectedValueOnce(new Error('Failed to read file'))
 
     await expect(validate('resume.json')).rejects.toThrow('Failed to read file')
   })
 
   it('should throw an error if the file is not valid JSON', async () => {
-    readFileSpy.mockResolvedValueOnce('invalid json')
+    vi.mocked(readFile).mockResolvedValueOnce('invalid json')
 
     await expect(validate('resume.json')).rejects.toThrow('Unexpected token \'i\', "invalid json" is not valid JSON')
   })
