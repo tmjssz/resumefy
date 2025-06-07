@@ -52,7 +52,7 @@
     "error-html": "^0.3.5",
     "express": "^4.21.2",
     "jsonschema": "^1.5.0",
-    "puppeteer": "^24.0.0",
+    "puppeteer": "24.5.0",
     "resumed": "^4.0.0"
   },
   "devDependencies": {
