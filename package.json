@@ -50,7 +50,7 @@
     "ansicolor": "^2.0.3",
     "commander": "^13.0.0",
     "error-html": "^0.3.5",
-    "express": "^4.21.2",
+    "express": "^5.1.0",
     "jsonschema": "^1.5.0",
     "puppeteer": "24.5.0",
     "resumed": "^4.0.0"
