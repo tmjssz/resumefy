@@ -3671,17 +3671,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resumed@npm:^4.0.0":
-  version: 4.1.0
-  resolution: "resumed@npm:4.1.0"
+"resumed@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "resumed@npm:6.0.0"
   dependencies:
     "@jsonresume/schema": "npm:^1.0.0"
     sade: "npm:^1.7.0"
-    strip-json-comments: "npm:^5.0.1"
-    yoctocolors: "npm:^2.0.0"
+    strip-json-comments: "npm:^5.0.0"
+  peerDependencies:
+    puppeteer: ^24.0.0
+  peerDependenciesMeta:
+    puppeteer:
+      optional: true
   bin:
     resumed: bin/resumed.js
-  checksum: 10c0/862a4c62d8543701498e2dae4f4fed7ee981af043344577e9660939a1e6542b06140d0d1b82b28f7aee003c083d37a4d20aacf5a36306c162570969c47b5d42f
+  checksum: 10c0/a15bd66ac92929a1c9930a367ab13d6ac59dd70609e64da2592a5cc7d4f895030509d3517838d0f365851db9a78983b18368ceead1a6205f196183fe2a591d84
   languageName: node
   linkType: hard
 
@@ -3704,7 +3708,7 @@ __metadata:
     jsonschema: "npm:^1.5.0"
     prettier: "npm:^3.4.2"
     puppeteer: "npm:24.5.0"
-    resumed: "npm:^4.0.0"
+    resumed: "npm:^6.0.0"
     tsc-alias: "npm:1.8.16"
     tsx: "npm:^4.19.2"
     typescript: "npm:^5.7.3"
@@ -4152,7 +4156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strip-json-comments@npm:^5.0.1":
+"strip-json-comments@npm:^5.0.0":
   version: 5.0.2
   resolution: "strip-json-comments@npm:5.0.2"
   checksum: 10c0/e9841b8face78a01b0eb66f81e0a3419186a96f1d26817a5e1f5260b0631c10e0a7f711dddc5988edf599e5c079e4dd6e91defd21523e556636ba5679786f5ac
@@ -4724,13 +4728,6 @@ __metadata:
   version: 0.1.0
   resolution: "yocto-queue@npm:0.1.0"
   checksum: 10c0/dceb44c28578b31641e13695d200d34ec4ab3966a5729814d5445b194933c096b7ced71494ce53a0e8820685d1d010df8b2422e5bf2cdea7e469d97ffbea306f
-  languageName: node
-  linkType: hard
-
-"yoctocolors@npm:^2.0.0":
-  version: 2.1.1
-  resolution: "yoctocolors@npm:2.1.1"
-  checksum: 10c0/85903f7fa96f1c70badee94789fade709f9d83dab2ec92753d612d84fcea6d34c772337a9f8914c6bed2f5fc03a428ac5d893e76fab636da5f1236ab725486d0
   languageName: node
   linkType: hard
 
