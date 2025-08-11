@@ -55,14 +55,14 @@ jobs:
     steps:
       - name: "Download Coverage Artifacts for Pull Request"
         id: download-coverage-pull-request
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: coverage-pull-request
           path: coverage
 
       - name: "Download Coverage Artifacts for Main"
         id: download-coverage-main
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: coverage-main
           path: coverage-main
