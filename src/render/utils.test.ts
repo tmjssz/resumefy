@@ -7,6 +7,8 @@ vi.mock('ansicolor', () => ({
   yellow: vi.fn((text) => text),
 }))
 
+vi.mock('jsonresume-theme-even', () => ({ foo: 'bar' }))
+
 describe('getFilename', () => {
   afterEach(() => {
     vi.resetAllMocks()
@@ -26,8 +28,6 @@ describe('getFilename', () => {
 
 describe('loadTheme', () => {
   const themeName = 'jsonresume-theme-even'
-
-  vi.mock('jsonresume-theme-even', () => ({ foo: 'bar' }))
 
   afterEach(() => {
     vi.resetAllMocks()

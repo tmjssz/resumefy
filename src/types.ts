@@ -2,10 +2,13 @@ export type Theme = {
   render: (resume: object) => string
 }
 
-export interface Resume {
+// A type alias rather than an interface: resumed's Resume carries an index
+// signature, and interfaces are not assignable to those.
+export type Resume = {
   meta?: {
     theme?: string
   }
+  [key: string]: unknown
 }
 
 export type RenderOptions = {
