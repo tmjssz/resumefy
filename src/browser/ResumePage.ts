@@ -31,7 +31,9 @@ export class ResumePage {
    * @returns Promise resolving when content is set
    */
   async setContent(content: string) {
-    await this.page.setContent(content, { waitUntil: 'networkidle0' })
+    await this.page.setContent(content, { waitUntil: 'load' })
+    // `load` does not cover webfonts, which themes rely on for the PDF output
+    await this.page.evaluate(() => document.fonts.ready)
   }
 
   /**

@@ -65,7 +65,12 @@ describe('ResumePage', () => {
     it('should set the content of the page', async () => {
       const content = '<html><body>Test</body></html>'
       await resumePage.setContent(content)
-      expect(page.setContent).toHaveBeenCalledWith(content, { waitUntil: 'networkidle0' })
+      expect(page.setContent).toHaveBeenCalledWith(content, { waitUntil: 'load' })
+    })
+
+    it('should wait for webfonts to be ready', async () => {
+      await resumePage.setContent('<html><body>Test</body></html>')
+      expect(page.evaluate).toHaveBeenCalledTimes(1)
     })
   })
 
