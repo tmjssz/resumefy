@@ -37,18 +37,29 @@ jobs:
       # this case statement's glob previously disagreed, so a scratch tag like `vnext` could fire
       # the workflow, fall into the "nothing to compare" branch, and publish package.json's
       # current (possibly unreleased) version with no tag actually agreeing to it. ref_type
-      # distinguishes "no tag at all" (dispatch from a branch — legitimate, skip) from "there is a
-      # tag and it doesn't parse" (must fail).
+      # distinguishes "no tag at all" (dispatch from a branch — legitimate, skip if it's a dry
+      # run) from "there is a tag and it doesn't parse" (must fail).
+      #
+      # A dispatch run with no tag can still reach the Publish step with dry-run set to false —
+      # e.g. by picking a release-please branch, whose package.json holds the next, unreleased
+      # version, in the Run-workflow dropdown. That must not be allowed to publish for real with
+      # no tag and no GitHub Release agreeing it is a release, so the no-tag branch only exits 0
+      # when this is actually a dry run; otherwise it fails closed.
       - name: Verify package.json matches the tag
         env:
           REF: ${{ github.ref }}
           REF_TYPE: ${{ github.ref_type }}
+          DRY_RUN: ${{ inputs.dry-run }}
         run: |
           case "$REF" in
             refs/tags/v[0-9]*) expected="${REF#refs/tags/v}" ;;
             *)
               if [ "$REF_TYPE" = "tag" ]; then
                 echo "::error::tag $REF does not look like a version (expected v<version>)"
+                exit 1
+              fi
+              if [ "$DRY_RUN" != "true" ]; then
+                echo "::error::no tag in $REF — a real publish requires a version tag"
                 exit 1
               fi
               echo "::notice::no tag in $REF — nothing to compare"
@@ -83,8 +94,9 @@ jobs:
       - name: Test
         run: yarn test:ci
 
-      # The same check CI runs. A broken tarball must be caught here, not by the first person to
-      # npx the CLI.
+      # The only place the packed tarball is actually executed. CI proves the code compiles and
+      # the unit tests pass, but never runs the built CLI out of a tarball — a broken tarball must
+      # be caught here, not by the first person to npx the CLI.
       - name: Packaging smoke test
         run: ./scripts/smoke-pack.sh
 
@@ -112,9 +124,10 @@ jobs:
 
           # Skip what is already on the registry — but only when actually publishing. On a dry run
           # this guard is deliberately not consulted, so `npm publish --dry-run` is always reached
-          # and the dry run — the documented way to validate this workflow before an irreversible
-          # release — always exercises the real publish invocation (tarball acceptance,
-          # provenance, the OIDC exchange), not just `yarn pack`.
+          # instead of short-circuiting when the version already exists. `npm publish --dry-run`
+          # does not authenticate or contact the registry to write, but it does exercise strictly
+          # more than `yarn pack`: manifest validation and correction, tag and access resolution,
+          # and the real publish code path.
           #
           # For a real publish, re-publishing an existing version is an EPUBLISHCONFLICT error,
           # which under `set -e` would abort this step — so a re-run after a partial failure must
