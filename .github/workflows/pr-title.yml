@@ -1,0 +1,66 @@
+name: PR title
+
+# Its own workflow rather than a job in ci.yml: ci.yml's default pull_request event types exclude
+# `edited`, and adding it there would re-run the whole node matrix on every title tweak. ci.yml also
+# runs on push:main and workflow_dispatch, where there is no PR title at all — a conditional job
+# would report as skipped, which the ci-ok gate treats as a failure.
+#
+# The cost is a second required status check: `pr-title` must be added to branch protection on main
+# alongside `ci-ok`, or this runs without being able to block a merge.
+#
+# `synchronize` is in the list because branch protection evaluates a required check against the PR's
+# current head SHA: without a run on every push, the newest head sits with the check missing and the
+# PR never becomes mergeable, however long ago the title itself passed.
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+
+concurrency:
+  # Editing a title several times only makes the last version worth checking. Cancelling is safe:
+  # whatever supersedes a run carries an equal-or-newer head SHA, so the current head always ends
+  # up with a result.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pr-title:
+    name: pr-title
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The base, not the merge commit. This job is a gate, and a gate must not be validated by
+          # the copy of itself that the pull request is proposing — a PR editing
+          # check-pr-title.sh would otherwise green-light its own unparseable title against its own
+          # edited script. It also sidesteps refs/pull/N/merge being stale or absent on a
+          # conflicted PR, which would fail the checkout and turn a required check red for nothing.
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+
+      # The title reaches the script through the environment rather than being interpolated into the
+      # shell text — this is what stops template injection.
+      - name: Check the pull request title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          # The script is deliberately run from the BASE checkout above, not from the pull
+          # request's own tree. On the pull request that first introduces it, it therefore does not
+          # exist yet, and `run:` would fail with exit 127 rather than a title verdict.
+          #
+          # Passing in that case is safe and self-limiting: the only way for the base branch to
+          # lack this script is for it to have never landed. It cannot be REMOVED from the base
+          # without a merge, and a merge is what this gate protects. Once this pull request lands,
+          # every later base carries the script and this branch is never taken again.
+          # Tested with -e, not -x, and invoked through `bash`: a lost executable bit would
+          # otherwise be indistinguishable from "not on the base yet" and would silently disable
+          # this gate rather than failing it.
+          if [ ! -e ./scripts/check-pr-title.sh ]; then
+            echo "::notice::check-pr-title.sh is not on the base branch yet — skipping until this pull request lands"
+            exit 0
+          fi
+
+          bash ./scripts/check-pr-title.sh "$PR_TITLE"

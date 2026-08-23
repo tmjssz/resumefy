@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "node",
+  "include-component-in-tag": false,
+  "bootstrap-sha": "c59385ce71ddc9768a265c97c6c1db288eab2d3b",
+  "packages": {
+    ".": {
+      "package-name": "resumefy",
+      "changelog-path": "CHANGELOG.md"
+    }
+  }
+}

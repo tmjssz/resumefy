@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { createRequire } from 'node:module'
 import { render } from './render'
 import { init } from './init'
 import { validate } from './validate'
@@ -23,6 +24,14 @@ describe('CLI', () => {
 
   afterEach(() => {
     vi.clearAllMocks()
+  })
+
+  it('reports the version and description from package.json', () => {
+    // Resolves to the repo root from src/cli/ under vitest, and to the package root from
+    // dist/cli/ once built — the two are at the same depth, which is what makes this work.
+    const { version, description } = createRequire(import.meta.url)('../../package.json')
+    expect(cli.version()).toBe(version)
+    expect(cli.description()).toBe(description)
   })
 
   describe('render', () => {
