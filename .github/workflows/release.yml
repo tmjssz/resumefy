@@ -1,0 +1,143 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: Pack and validate without publishing
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      # Required for npm provenance and OIDC trusted publishing: npm exchanges this for a Sigstore
+      # certificate and for its registry credential.
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup
+
+      # Placed before the build and tests so a bad release fails in seconds rather than after ten
+      # minutes of work. On a workflow_dispatch dry run there is no tag, so there is nothing to
+      # compare and the check is skipped rather than failed.
+      - name: Verify package.json matches the tag
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          case "$REF" in
+            refs/tags/v[0-9]*) expected="${REF#refs/tags/v}" ;;
+            *) echo "::notice::no version tag in $REF — nothing to compare"; exit 0 ;;
+          esac
+
+          actual="$(node -p 'require("./package.json").version')"
+          echo "tag $expected / package.json $actual"
+          if [ "$expected" != "$actual" ]; then
+            echo "::error::tag v$expected does not match package.json version $actual"
+            exit 1
+          fi
+
+      # The .node-version pin of 20.9.0 bundles npm 10.x, which cannot do OIDC trusted publishing.
+      # Pinned to the major so Dependabot cannot silently move it across a breaking change, with an
+      # explicit floor assertion so a surprise downgrade fails here rather than at publish time.
+      - name: Install an npm that supports trusted publishing
+        run: |
+          npm install -g npm@11
+          installed="$(npm --version)"
+          echo "npm $installed"
+          required=11.5.1
+          if [ "$(printf '%s\n%s\n' "$required" "$installed" | sort -V | head -1)" != "$required" ]; then
+            echo "::error::npm $installed is older than $required, which OIDC trusted publishing requires"
+            exit 1
+          fi
+
+      - name: Build
+        run: yarn build
+
+      - name: Test
+        run: yarn test:ci
+
+      # The same check CI runs. A broken tarball must be caught here, not by the first person to
+      # npx the CLI.
+      - name: Packaging smoke test
+        run: ./scripts/smoke-pack.sh
+
+      # yarn packs (it respects prepack and this repo's yarn-managed workspace), npm publishes (it
+      # has the OIDC trusted-publishing and --provenance support).
+      - name: Publish
+        env:
+          # Empty on a tag push, which is the real-publish path. Only workflow_dispatch sets it.
+          DRY_RUN: ${{ inputs.dry-run }}
+        run: |
+          out="$(mktemp -d)"
+          tgz="$out/resumefy.tgz"
+          yarn pack --out "$tgz"
+
+          name="$(node -p 'require("./package.json").name')"
+          version="$(node -p 'require("./package.json").version')"
+
+          # An array, not a string: an unquoted "$args" would be word-split, which works but is
+          # exactly what shellcheck flags (SC2086) and breaks on any argument with a space.
+          args=(--provenance --access public)
+          if [ "$DRY_RUN" = "true" ]; then
+            args+=(--dry-run)
+            echo "::notice::dry run — nothing will be published"
+          fi
+
+          # Skip what is already on the registry. Re-publishing an existing version is an
+          # EPUBLISHCONFLICT error, which under `set -e` would abort this step — so a re-run after a
+          # partial failure must be recoverable by fixing the cause, not by burning a version.
+          #
+          # `npm view <name>@<version>` exits 0 only when that exact version exists, and 1 both for
+          # an unknown package and a known package at an unknown version. A transient failure
+          # therefore reads as "not published", and the publish that follows fails loudly on
+          # conflict rather than silently double-publishing.
+          if npm view "$name@$version" version >/dev/null 2>&1; then
+            echo "::notice::$name@$version is already on the registry — skipping the publish"
+          else
+            echo "publishing $name@$version"
+            npm publish "$tgz" "${args[@]}"
+          fi
+
+          # Written here rather than recomputed in the next step, so the two cannot disagree.
+          printf '%s %s\n' "$name" "$version" > "$RUNNER_TEMP/release-manifest.txt"
+
+      # A green publish step only means npm did not error. This asks the registry what is actually
+      # there, so "the workflow passed" means "the release is live".
+      #
+      # Queries the dist-tags endpoint rather than `npm view`: right after a first publish the
+      # packument endpoint that `npm view` uses can serve a cached 404 for several minutes while
+      # dist-tags is already correct. The retry covers the remaining read-after-write lag.
+      - name: Verify the release is on the registry
+        if: ${{ inputs.dry-run != true }}
+        run: |
+          manifest="$RUNNER_TEMP/release-manifest.txt"
+          test -s "$manifest" || { echo "::error::no release manifest — the publish step did not run"; exit 1; }
+
+          read -r name version < "$manifest"
+          encoded="${name//\//%2f}"
+          found=""
+          for attempt in 1 2 3 4 5 6; do
+            found="$(curl -fsSL "https://registry.npmjs.org/-/package/$encoded/dist-tags" 2>/dev/null | jq -r '.latest // empty')"
+            [ "$found" = "$version" ] && break
+            echo "  $name: registry says '${found:-<absent>}', want $version (attempt $attempt)"
+            sleep 10
+          done
+
+          if [ "$found" != "$version" ]; then
+            echo "::error::$name is not at $version on the registry (latest: ${found:-<absent>})"
+            exit 1
+          fi
+          echo "::notice::$name@$version is live on the registry"
