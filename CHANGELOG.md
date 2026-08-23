@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/tmjssz/resumefy/compare/v2.0.0...v2.0.1) (2026-08-23)
+
+
+### Bug Fixes
+
+* drop the resumed dependency to stop npm installing two puppeteers ([#146](https://github.com/tmjssz/resumefy/issues/146)) ([59000cb](https://github.com/tmjssz/resumefy/commit/59000cbb9cea1a115a14bec1b56237728e7a26f3))
+
 ## [2.0.0](https://github.com/tmjssz/resumefy/compare/1.6.0...v2.0.0) (2026-08-23)
 
 
