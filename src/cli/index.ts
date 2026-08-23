@@ -1,9 +1,16 @@
+import { createRequire } from 'node:module'
 import { program } from 'commander'
 import { render } from './render'
 import { init } from './init'
 import { validate } from './validate'
 
-export const cli = program.version('1.6.0').description('A simple toolkit to bring your JSON Resume to life')
+// Read at runtime rather than imported: `import ... with { type: 'json' }` needs Node >= 20.10,
+// below this package's engines floor, and tsconfig's rootDir of ./src makes tsc reject importing
+// package.json from above src/ anyway. src/cli/ and dist/cli/ sit at the same depth, so this one
+// relative path is correct for vitest, for the built output, and inside the packed tarball.
+const { version, description } = createRequire(import.meta.url)('../../package.json')
+
+export const cli = program.version(version).description(description)
 
 cli
   .command('render', { isDefault: true })
