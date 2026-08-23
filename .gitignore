@@ -7,6 +7,12 @@ sample.resume.*
 
 .env
 
+# Local design specs and plans, not part of the repo
+docs/superpowers/
+
+# Subagent-driven-development scratch workspace
+.superpowers/
+
 # TypeScript cache
 *.tsbuildinfo
 
