@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { launch } from 'puppeteer'
-import ErrorHtmlRenderer from 'error-html'
 import { Browser } from 'puppeteer'
 import { ResumeBrowser } from './ResumeBrowser'
 import { ResumePage } from './ResumePage'
@@ -22,6 +21,13 @@ vi.mock('puppeteer', () => {
 vi.mock('ansicolor')
 vi.mock('./ResumePage')
 
+// error-html exposes a factory rather than a class, so there is no prototype to
+// spy on; mock the module and hand back a stable render mock instead.
+const { errorHtmlRenderSpy } = vi.hoisted(() => ({ errorHtmlRenderSpy: vi.fn() }))
+vi.mock('error-html', () => ({
+  createErrorHtmlRenderer: () => ({ render: errorHtmlRenderSpy }),
+}))
+
 describe('ResumeBrowser', () => {
   const firstPage = {
     addMenu: vi.fn(),
@@ -37,7 +43,6 @@ describe('ResumeBrowser', () => {
 
   let resumeBrowser: ResumeBrowser
 
-  const errorHtmlRenderSpy = vi.spyOn(ErrorHtmlRenderer.prototype, 'render')
   const setContentSpy = vi.spyOn(ResumePage.prototype, 'setContent')
   const existsSyncSpy = vi.spyOn(fs, 'existsSync')
   const htmlSpy = vi.spyOn(ResumePage.prototype, 'html')

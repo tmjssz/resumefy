@@ -1,7 +1,7 @@
 import { strip } from 'ansicolor'
 import type { Browser, LaunchOptions, Page } from 'puppeteer'
 import puppeteer from 'puppeteer'
-import ErrorHtmlRenderer from 'error-html'
+import { createErrorHtmlRenderer } from 'error-html'
 import { existsSync } from 'fs'
 import { mkdir } from 'fs/promises'
 import { ResumePage } from './ResumePage'
@@ -11,12 +11,12 @@ import { ResumePage } from './ResumePage'
  */
 export class ResumeBrowser {
   #browser: Browser
-  #errorHtmlRenderer: ErrorHtmlRenderer
+  #errorHtmlRenderer: ReturnType<typeof createErrorHtmlRenderer>
   #previewPage: Page | undefined
 
   constructor(browser: Browser) {
     this.#browser = browser
-    this.#errorHtmlRenderer = new ErrorHtmlRenderer({ appPath: process.cwd() })
+    this.#errorHtmlRenderer = createErrorHtmlRenderer({ appPath: process.cwd() })
   }
 
   static async launch(options?: LaunchOptions) {
