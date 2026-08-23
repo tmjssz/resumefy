@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # Cancel superseded runs on a PR, but never abandon a run on main.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - run: yarn lint
+
+  build-test:
+    name: build-test (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      # One version failing is information about that version; keep the other running.
+      fail-fast: false
+      matrix:
+        # 20 is the engines floor and the .node-version pin; 24 is current LTS. Node 20 is past
+        # end of life, but it is what this package still claims to support — raising the floor is a
+        # breaking change and belongs in its own major release.
+        node: ['20', '24']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        with:
+          node-version: ${{ matrix.node }}
+
+      - run: yarn build
+      - run: yarn test:ci
+
+      # One leg only: two identical artifacts would collide on name, and the coverage numbers do
+      # not differ by node version. The pinned version is the canonical one.
+      - name: Upload coverage
+        if: matrix.node == '20'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-current
+          path: coverage
+
+  # One stable name for branch protection: a matrix entry added or removed here never requires a
+  # branch-protection edit. `if: always()` is what makes a skipped or cancelled job fail the gate
+  # instead of silently passing it.
+  #
+  # Strict over lint and build-test only. The coverage jobs are deliberately NOT in `needs`: they
+  # do not run on main, so including them would force this gate to accept `skipped` as a pass —
+  # which would also let a build-test job skipped by a mis-written `if:` sail through. Coverage is
+  # reporting, not correctness, and must not block a merge.
+  ci-ok:
+    name: ci-ok
+    needs: [lint, build-test]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check that every upstream job succeeded
+        # Via env rather than interpolated into the script: keeps the expression out of the shell
+        # text, which is the pattern that stops template injection generally.
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "upstream results: $RESULTS"
+          for r in $RESULTS; do
+            if [ "$r" != "success" ]; then
+              echo "::error::an upstream job did not succeed ($r)"
+              exit 1
+            fi
+          done
