@@ -2,7 +2,6 @@ import { bright, underline } from 'ansicolor'
 import { readFile } from 'fs/promises'
 import path from 'path'
 import { LaunchOptions } from 'puppeteer'
-import { render as resumedRender } from 'resumed'
 import { ResumeBrowser } from '../browser'
 import { getFilename, loadTheme } from './utils'
 import { ConsoleLog, RenderOptions, Resume, Theme } from '../types'
@@ -80,7 +79,9 @@ export class Renderer {
    */
   async #generateHtml(log: ConsoleLog = () => {}) {
     log('📎 ', 'Rendering resume')
-    this.#resumeHtml = await resumedRender(this.#resume, this.#themeModule!)
+    // Calling the theme directly rather than through resumed, whose render is exactly this
+    // delegation. See the note on the dropped dependency in the readme.
+    this.#resumeHtml = await this.#themeModule!.render(this.#resume)
   }
 
   /**

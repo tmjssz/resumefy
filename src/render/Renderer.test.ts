@@ -3,15 +3,12 @@ import express from 'express'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { readFile } from 'fs/promises'
 import { Renderer } from './Renderer'
-import * as resumed from 'resumed'
 import * as validateObject from '../validate/validate'
 import { RenderOptions } from '../types'
 import * as utils from './utils'
 import { log } from '../cli/log'
 import * as startServer from '../browser/server'
 import { ResumeBrowser } from '../browser'
-
-vi.mock('resumed')
 
 vi.mock('fs/promises', () => ({
   readFile: vi.fn(),
@@ -26,7 +23,6 @@ vi.mock('../browser', () => ({
 describe('Renderer', () => {
   const getFilenameSpy = vi.spyOn(utils, 'getFilename')
   const loadThemeSpy = vi.spyOn(utils, 'loadTheme')
-  const resumedRenderSpy = vi.spyOn(resumed, 'render')
   const validateObjectSpy = vi.spyOn(validateObject, 'validateObject')
   const stepLogSpy = vi.spyOn(log, 'step')
   const logSpy = vi.spyOn(log, 'log')
@@ -57,7 +53,7 @@ describe('Renderer', () => {
     loadThemeSpy.mockResolvedValue(mockThemeModule)
     vi.mocked(readFile).mockResolvedValue(JSON.stringify(sampleResume))
     validateObjectSpy.mockReturnValue(true)
-    resumedRenderSpy.mockResolvedValue(mockRenderResult)
+    mockThemeModule.render.mockResolvedValue(mockRenderResult)
     stepLogSpy.mockImplementation(() => mockStepLogFn)
     logSpy.mockImplementation(() => {})
     successLogSpy.mockImplementation(() => {})
@@ -106,8 +102,8 @@ describe('Renderer', () => {
       expect(loadThemeSpy).toHaveBeenCalledTimes(1)
       expect(loadThemeSpy).toHaveBeenCalledWith(options.theme, sampleResume)
 
-      expect(resumedRenderSpy).toHaveBeenCalledTimes(1)
-      expect(resumedRenderSpy).toHaveBeenCalledWith(sampleResume, mockThemeModule)
+      expect(mockThemeModule.render).toHaveBeenCalledTimes(1)
+      expect(mockThemeModule.render).toHaveBeenCalledWith(sampleResume)
 
       expect(browserRenderSpy).toHaveBeenCalledTimes(1)
       expect(browserRenderSpy).toHaveBeenCalledWith(mockRenderResult)
@@ -185,7 +181,7 @@ describe('Renderer', () => {
 
         const renderError = new Error('render error')
 
-        resumedRenderSpy.mockRejectedValueOnce(renderError)
+        mockThemeModule.render.mockRejectedValueOnce(renderError)
 
         await expect(() => renderer.render()).rejects.toThrow('render error')
       })
@@ -239,11 +235,11 @@ describe('Renderer', () => {
 
         const renderError = new Error('resume render error')
 
-        resumedRenderSpy.mockRejectedValueOnce(renderError)
+        mockThemeModule.render.mockRejectedValueOnce(renderError)
 
         await expect(() => renderer.render()).rejects.toThrow('resume render error')
 
-        expect(resumedRenderSpy).toHaveBeenCalledTimes(1)
+        expect(mockThemeModule.render).toHaveBeenCalledTimes(1)
         expect(mockResumeBrowser.error).toHaveBeenCalledTimes(1)
         expect(mockResumeBrowser.error).toHaveBeenCalledWith(renderError)
       })
