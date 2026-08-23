@@ -253,3 +253,50 @@ validate('./resume.json')
 #### Returns
 
 `Promise<boolean>`: Promise resolving with a boolean whether resume JSON is valid.
+
+## Releasing
+
+Releases are automated. Nothing is version-bumped or published by hand.
+
+1. Merge pull requests into `main` with **squashed, Conventional Commit titles** — the `pr-title`
+   check enforces this. `feat:` drives a minor bump, `fix:` a patch, and a trailing `!` a major.
+2. [release-please](https://github.com/googleapis/release-please) opens or refreshes a release pull
+   request that bumps `package.json` and writes `CHANGELOG.md`.
+3. Merging that pull request creates the `v<version>` tag and the GitHub Release.
+4. The tag triggers `release.yml`, which re-verifies the versions, builds, tests, runs the
+   packaging smoke test, publishes to npm with provenance over OIDC, and then asks the registry to
+   confirm the version is live.
+
+To exercise the publish path without publishing, run the **Release** workflow manually with
+`dry-run: true`.
+
+### Version sources
+
+`package.json` is the only place the version and the description are written. The CLI reads both at
+runtime via `createRequire`, so release-please has a single field to update and there is no way for
+the reported version and the published version to disagree. A unit test asserts `cli.version()` and
+`cli.description()` match `package.json`, and the packaging smoke test re-checks the version against
+the installed tarball.
+
+### One-time setup
+
+Required before the first automated release, and not doable in code:
+
+- **GitHub App** installed on this repository with Contents, Pull requests and Issues write
+  permissions, exposed as the `APP_CLIENT_ID` (the Client ID, not the numeric App ID) and
+  `APP_PRIVATE_KEY` repository secrets. The default `GITHUB_TOKEN` will not do: events created with
+  it do not trigger workflows, so its tag would never start `release.yml`.
+- **npm trusted publisher** configured for `resumefy` on npmjs.com, pointing at this repository and
+  the `release.yml` workflow. That filename is part of the trust configuration — renaming the
+  workflow breaks publishing until npmjs.com is updated to match.
+- **Branch protection** on `main` requiring the `ci-ok` and `pr-title` checks — and **remove the
+  stale required checks** left behind by the workflows this change deletes. Any of `Build`,
+  `Run linters`, `Unit tests` or `Final test results` still listed as required will never report
+  again, because no workflow produces them any more, and every pull request would sit permanently
+  unmergeable waiting for a check that cannot arrive.
+- **Squash merging** as the merge strategy, so pull request titles become the commit subjects
+  release-please parses.
+- **"Allow GitHub Actions to create and approve pull requests"** enabled, for the release pull
+  request.
+- The old **`NPM_TOKEN`** secret becomes unused once trusted publishing works. Remove it after the
+  first successful release, not before.
