@@ -26,18 +26,40 @@ jobs:
       - uses: ./.github/actions/setup
       - run: yarn lint
 
+  # The matrix is derived from package.json's engines floor and the .node-version pin rather than
+  # written out here, because writing it out here went stale: the list still read ['20', '24'] with
+  # a comment calling 20 "the engines floor and the .node-version pin" after both had moved on. CI
+  # was testing a version the package no longer supports and never testing the pin.
+  #
+  # No ./.github/actions/setup: this needs the runner's preinstalled node to read two files, not a
+  # toolchain or an install.
+  node-versions:
+    name: node-versions
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.derive.outputs.matrix }}
+      pin: ${{ steps.derive.outputs.pin }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # tee rather than a plain redirect so the resolved versions are in the log too, which is what
+      # makes a surprising matrix diagnosable from the run page alone.
+      - id: derive
+        shell: bash
+        run: node scripts/ci-node-versions.mjs | tee -a "$GITHUB_OUTPUT"
+
   build-test:
     name: build-test (node ${{ matrix.node }})
+    needs: node-versions
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
       # One version failing is information about that version; keep the other running.
       fail-fast: false
       matrix:
-        # 20 is the engines floor and the .node-version pin; 24 is current LTS. Node 20 is past
-        # end of life, but it is what this package still claims to support — raising the floor is a
-        # breaking change and belongs in its own major release.
-        node: ['20', '24']
+        node: ${{ fromJSON(needs.node-versions.outputs.matrix) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -50,9 +72,10 @@ jobs:
       - run: yarn test:ci
 
       # One leg only: two identical artifacts would collide on name, and the coverage numbers do
-      # not differ by node version. The pinned version is the canonical one.
+      # not differ by node version. The pinned version is the canonical one, taken from the derived
+      # output so this cannot name a leg the matrix no longer contains.
       - name: Upload coverage
-        if: matrix.node == '20'
+        if: matrix.node == needs.node-versions.outputs.pin
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: coverage-current
@@ -110,17 +133,57 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
-      # This action commits the regenerated badge back to the repository.
+      # This job commits the regenerated badge back to the gh-pages branch.
       contents: write
     steps:
-      # The one checkout in this repo that keeps its credentials, because the action below pushes.
-      # Every other checkout sets persist-credentials: false.
+      # The generator, read from the commit that triggered the run. No credentials: this checkout
+      # is never pushed from.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: source
+          persist-credentials: false
+
+      # The publish target, in its own directory. This is the one checkout in the repo that keeps
+      # its credentials, because this job pushes to it.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: gh-pages
+          path: pages
+
+      # Into the runner temp, deliberately not into either checkout: coverage output that landed
+      # inside the gh-pages tree is how that branch ended up carrying a copy of the source.
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: coverage-current
-          path: coverage
-      - uses: we-cli/coverage-badge-action@8f6b0bd1b727cde6212c8c62d3329c4aac09fec3 # v1.0.1
+          path: ${{ runner.temp }}/coverage
+
+      # Replaces we-cli/coverage-badge-action. That action drove its commit through
+      # stefanzweifel/git-auto-commit-action@v4 and actions/checkout@v3, both of which declare
+      # `using: node16` — a runtime GitHub no longer provides — so the job had never once
+      # succeeded. Rendering the SVG here also drops a third-party action that held
+      # `contents: write` on this repository.
+      - name: Render the coverage badge
+        shell: bash
+        run: node source/scripts/coverage-badge.mjs "$RUNNER_TEMP/coverage/coverage-summary.json" pages/badges/coverage.svg
+
+      # The renderer is deterministic for a given percentage, so an unchanged badge produces no
+      # diff and no commit. --intent-to-add first because a path git has never seen does not appear
+      # in `git diff` at all, which would read as "unchanged" the very first time the badge is
+      # published rather than as a new file.
+      - name: Publish it when the number moved
+        shell: bash
+        working-directory: pages
+        run: |
+          git add --intent-to-add badges/coverage.svg
+          if git diff --quiet -- badges/coverage.svg; then
+            echo "coverage badge unchanged; nothing to publish"
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add badges/coverage.svg
+          git commit -m 'Update badges [skip ci]'
+          git push
 
   # One stable name for branch protection: a matrix entry added or removed here never requires a
   # branch-protection edit. `if: always()` is what makes a skipped or cancelled job fail the gate
