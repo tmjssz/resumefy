@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    tags: ['v*']
+    tags: ['v[0-9]*']
   workflow_dispatch:
     inputs:
       dry-run:
@@ -31,15 +31,29 @@ jobs:
       - uses: ./.github/actions/setup
 
       # Placed before the build and tests so a bad release fails in seconds rather than after ten
-      # minutes of work. On a workflow_dispatch dry run there is no tag, so there is nothing to
-      # compare and the check is skipped rather than failed.
+      # minutes of work. On a workflow_dispatch dry run there is no tag at all, so there is
+      # nothing to compare and the check is skipped rather than failed. But a tag ref that does
+      # not parse as v<version> must be fatal, not silently skipped: the push trigger's glob and
+      # this case statement's glob previously disagreed, so a scratch tag like `vnext` could fire
+      # the workflow, fall into the "nothing to compare" branch, and publish package.json's
+      # current (possibly unreleased) version with no tag actually agreeing to it. ref_type
+      # distinguishes "no tag at all" (dispatch from a branch — legitimate, skip) from "there is a
+      # tag and it doesn't parse" (must fail).
       - name: Verify package.json matches the tag
         env:
           REF: ${{ github.ref }}
+          REF_TYPE: ${{ github.ref_type }}
         run: |
           case "$REF" in
             refs/tags/v[0-9]*) expected="${REF#refs/tags/v}" ;;
-            *) echo "::notice::no version tag in $REF — nothing to compare"; exit 0 ;;
+            *)
+              if [ "$REF_TYPE" = "tag" ]; then
+                echo "::error::tag $REF does not look like a version (expected v<version>)"
+                exit 1
+              fi
+              echo "::notice::no tag in $REF — nothing to compare"
+              exit 0
+              ;;
           esac
 
           actual="$(node -p 'require("./package.json").version')"
@@ -96,15 +110,21 @@ jobs:
             echo "::notice::dry run — nothing will be published"
           fi
 
-          # Skip what is already on the registry. Re-publishing an existing version is an
-          # EPUBLISHCONFLICT error, which under `set -e` would abort this step — so a re-run after a
-          # partial failure must be recoverable by fixing the cause, not by burning a version.
+          # Skip what is already on the registry — but only when actually publishing. On a dry run
+          # this guard is deliberately not consulted, so `npm publish --dry-run` is always reached
+          # and the dry run — the documented way to validate this workflow before an irreversible
+          # release — always exercises the real publish invocation (tarball acceptance,
+          # provenance, the OIDC exchange), not just `yarn pack`.
+          #
+          # For a real publish, re-publishing an existing version is an EPUBLISHCONFLICT error,
+          # which under `set -e` would abort this step — so a re-run after a partial failure must
+          # be recoverable by fixing the cause, not by burning a version.
           #
           # `npm view <name>@<version>` exits 0 only when that exact version exists, and 1 both for
           # an unknown package and a known package at an unknown version. A transient failure
           # therefore reads as "not published", and the publish that follows fails loudly on
           # conflict rather than silently double-publishing.
-          if npm view "$name@$version" version >/dev/null 2>&1; then
+          if [ "$DRY_RUN" != "true" ] && npm view "$name@$version" version >/dev/null 2>&1; then
             echo "::notice::$name@$version is already on the registry — skipping the publish"
           else
             echo "publishing $name@$version"
