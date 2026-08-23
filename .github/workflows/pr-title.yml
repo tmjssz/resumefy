@@ -46,4 +46,21 @@ jobs:
       - name: Check the pull request title
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
-        run: ./scripts/check-pr-title.sh "$PR_TITLE"
+        run: |
+          # The script is deliberately run from the BASE checkout above, not from the pull
+          # request's own tree. On the pull request that first introduces it, it therefore does not
+          # exist yet, and `run:` would fail with exit 127 rather than a title verdict.
+          #
+          # Passing in that case is safe and self-limiting: the only way for the base branch to
+          # lack this script is for it to have never landed. It cannot be REMOVED from the base
+          # without a merge, and a merge is what this gate protects. Once this pull request lands,
+          # every later base carries the script and this branch is never taken again.
+          # Tested with -e, not -x, and invoked through `bash`: a lost executable bit would
+          # otherwise be indistinguishable from "not on the base yet" and would silently disable
+          # this gate rather than failing it.
+          if [ ! -e ./scripts/check-pr-title.sh ]; then
+            echo "::notice::check-pr-title.sh is not on the base branch yet — skipping until this pull request lands"
+            exit 0
+          fi
+
+          bash ./scripts/check-pr-title.sh "$PR_TITLE"
