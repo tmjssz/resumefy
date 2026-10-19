@@ -3341,7 +3341,7 @@ __metadata:
     jsonschema: "npm:^1.5.0"
     prettier: "npm:^3.4.2"
     puppeteer: "npm:25.8.0"
-    tsc-alias: "npm:1.9.4"
+    tsc-alias: "npm:1.9.7"
     tsx: "npm:^4.19.2"
     typescript: "npm:^5.7.3"
     typescript-eslint: "npm:^8.19.1"
@@ -3837,9 +3837,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsc-alias@npm:1.9.4":
-  version: 1.9.4
-  resolution: "tsc-alias@npm:1.9.4"
+"tsc-alias@npm:1.9.7":
+  version: 1.9.7
+  resolution: "tsc-alias@npm:1.9.7"
   dependencies:
     chokidar: "npm:^3.5.3"
     commander: "npm:^9.0.0"
@@ -3850,7 +3850,7 @@ __metadata:
     plimit-lit: "npm:^1.2.6"
   bin:
     tsc-alias: dist/bin/index.js
-  checksum: 10c0/80f0e8e69a5a9ace870c60a26461563b63397d17e594bb6ad5b2e0ea5f49f6b77810f21f1fe528a7891efd12f25f79aa999eea7b3e0f93a1ad16c6ab08b2b0a8
+  checksum: 10c0/df5af15db97e21d1152f3a47896264d68404fab196a2014d9746da3e35600d09c12affa13fad42d571f9cc0eba8e491549d5ad20aa87990a2caad606db418ce9
   languageName: node
   linkType: hard
 
